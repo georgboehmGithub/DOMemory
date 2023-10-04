@@ -46,3 +46,27 @@ export const fetchCardSets = (callback) => {
       );
     });
   };
+
+  export const removeCardSet = (id, callback) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "DELETE FROM card_sets WHERE id = ?",
+        [id],
+        (_, results) => {
+          if (results.rowsAffected > 0) {
+            console.log(`Card set with ID ${id} removed successfully`);
+            // Check if a callback function is provided before invoking it
+            if (callback) {
+              callback();
+            }
+          } else {
+            console.error(`Failed to remove card set with ID ${id}`);
+          }
+        },
+        (_, error) => {
+          console.error("Error removing card set:", error);
+        }
+      );
+    });
+  };
+  

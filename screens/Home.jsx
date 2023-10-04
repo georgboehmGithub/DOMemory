@@ -10,16 +10,16 @@ import {
 
 import { useNavigation } from "@react-navigation/native";
 import { fetchCardSets } from "../database";
-import * as SQLite from "expo-sqlite";
+import ConfirmationModal from "../components/ConfirmationModal";
+import { removeCardSet } from "../database";
 
-const db = SQLite.openDatabase("mydb.db");
-
-// TODO: Set removal functionality
 // TODO: Add set functionality
 // TODO: How to trigger refetch after set removal or addition?
 const Home = () => {
   const navigation = useNavigation();
   const [cardSets, setCardSets] = useState([]);
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  const [selectedSetId, setSelectedSetId] = useState(null);
 
   useEffect(() => {
     // Fetch card sets from the database
@@ -27,6 +27,27 @@ const Home = () => {
       setCardSets(data);
     });
   }, []);
+
+  const confirmSetCardRemoval = () => {
+    removeCardSet(selectedSetId, () => {
+      // Callback function to fetch card sets again after removal
+      fetchCardSets((data) => {
+        setCardSets(data);
+      });
+    });
+    setRemoveModalVisible(false);
+    setSelectedSetId(null);
+  };
+
+  const cancelSetCardRemoval = () => {
+    setRemoveModalVisible(false);
+    setSelectedSetId(null);
+  };
+
+  const handleSetCardRemoval = (itemId) => {
+    setSelectedSetId(itemId);
+    setRemoveModalVisible(true);
+  };
 
   const renderItem = ({ item }) => (
     <Pressable
@@ -42,13 +63,12 @@ const Home = () => {
         {"\n"}
         {item.personalBest}
       </Text>
-      <Button title="remove" onPress={() => handleRemove(item.id)}></Button>
+      <Button
+        title="remove"
+        onPress={() => handleSetCardRemoval(item.id)}
+      ></Button>
     </Pressable>
   );
-
-  const handleRemove = (id) => {
-    // TODO: Implement logic to remove a card set from the database
-  };
 
   const styles = StyleSheet.create({
     cardContainer: {
@@ -68,6 +88,11 @@ const Home = () => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
       ></FlatList>
+      <ConfirmationModal
+        isVisible={removeModalVisible}
+        confirmRemove={confirmSetCardRemoval}
+        cancelRemove={cancelSetCardRemoval}
+      ></ConfirmationModal>
     </View>
   );
 };

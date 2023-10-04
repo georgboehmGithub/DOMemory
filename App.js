@@ -14,8 +14,6 @@ import { initializeSetDatabase } from "./database";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-
-
 function HomeStack() {
   return (
     <Stack.Navigator>
