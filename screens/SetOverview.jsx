@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View, StyleSheet, FlatList, Pressable } from "react-native";
 
+// TODO: Database fetching and such
 const SetOverview = ({ route }) => {
   const { title, group, numCards, personalBest } = route.params;
 

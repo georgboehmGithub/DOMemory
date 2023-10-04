@@ -69,4 +69,27 @@ export const fetchCardSets = (callback) => {
       );
     });
   };
+
+export const insertCardSet = (data, callback) => {
+    const { title, group_name, numCards, personalBest } = data;
+    
+    db.transaction((tx) => {
+      tx.executeSql(
+        "INSERT INTO card_sets (title, group_name, numCards, personalBest) VALUES (?, ?, ?, ?)",
+        [title, group_name, numCards, personalBest],
+        (_, results) => {
+          if (results.rowsAffected > 0) {
+            console.log("Card set inserted successfully");
+            // If insertion was successful, invoke the callback to notify the component
+            callback();
+          } else {
+            console.error("Failed to insert card set");
+          }
+        },
+        (_, error) => {
+          console.error("Error inserting card set:", error);
+        }
+      );
+    });
+  };
   
