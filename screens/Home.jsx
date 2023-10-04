@@ -14,7 +14,8 @@ import ConfirmationModal from "../components/ConfirmationModal";
 import { removeCardSet, insertCardSet, updateCardSet } from "../database";
 import CreateModifySetFormModal from "../components/forms/CreateModifySetFormModal";
 
-const Home = () => {
+const Home = ({ route }) => {
+  const { isDatabaseInitialized } = route.params;
   const navigation = useNavigation();
   const [cardSets, setCardSets] = useState([]);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
@@ -24,12 +25,16 @@ const Home = () => {
 
   // TODO: Write refetch card sets function
   useEffect(() => {
+    console.log(
+      "HOME USE EFFECT isDatabaseInitialized: ",
+      isDatabaseInitialized
+    );
     // Fetch card sets from the database
     fetchCardSets((data) => {
       console.log("Fetched these sets: ", data);
       setCardSets(data);
     });
-  }, []);
+  }, [isDatabaseInitialized]);
 
   /**
    * Removing set card logic

@@ -2,7 +2,7 @@ import * as SQLite from "expo-sqlite";
 
 const db = SQLite.openDatabase("mydb.db");
 
-export const initializeSetDatabase = () => {
+export const initializeSetDatabase = (callback) => {
   db.transaction((tx) => {
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS card_sets (
@@ -16,6 +16,7 @@ export const initializeSetDatabase = () => {
       (_, results) => {
         if (results.rowsAffected >= 0) {
           console.log("Card set table created successfully");
+          callback()
           // You can add code here to insert data if needed
         } else {
           console.error("Failed to create card set table");

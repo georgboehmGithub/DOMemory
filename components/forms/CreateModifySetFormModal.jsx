@@ -27,7 +27,7 @@ const CreateModifySetFormModal = ({
   }, [existingSetMetaData]);
 
   const handleCardCreatioModificationSubmit = (data) => {
-    onSubmit(data);
+    onSubmit(data, () => reset());
   };
 
   return (
@@ -77,7 +77,7 @@ const CreateModifySetFormModal = ({
             placeholder="Number of Cards"
             onBlur={onBlur}
             onChangeText={onChange}
-            value={value}
+            value={value.toString()}
           />
         )}
         name="numCards"
@@ -97,7 +97,7 @@ const CreateModifySetFormModal = ({
             placeholder="Personal Best"
             onBlur={onBlur}
             onChangeText={onChange}
-            value={value}
+            value={value.toString()}
           />
         )}
         name="personalBest"
@@ -109,7 +109,13 @@ const CreateModifySetFormModal = ({
         title="Submit"
         onPress={handleSubmit(handleCardCreatioModificationSubmit)}
       />
-      <Button title="Cancel" onPress={onCancel} />
+      <Button
+        title="Cancel"
+        onPress={() => {
+          reset();
+          onCancel();
+        }}
+      />
     </Modal>
   );
 };
