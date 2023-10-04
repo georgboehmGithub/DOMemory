@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -8,60 +8,65 @@ import {
   StyleSheet,
 } from "react-native";
 
-const Home = ({ navigation }) => {
-  const CardSets = [
-    { title: "Set1", group: "Frontend", numCards: 2, personalBest: 0.5 },
-    { title: "Set2", group: "Frontend", numCards: 12, personalBest: 0.8 },
-    { title: "Set3", group: "Backend", numCards: 4, personalBest: 0.75 },
-    { title: "Set4", group: "General", numCards: 6, personalBest: 0.6 },
-    { title: "Set5", group: "Frontend", numCards: 2, personalBest: 0.5 },
-    { title: "Set6", group: "Frontend", numCards: 12, personalBest: 0.8 },
-    { title: "Set7", group: "Backend", numCards: 4, personalBest: 0.75 },
-    { title: "Set8", group: "General", numCards: 6, personalBest: 0.6 },
-    { title: "Set9", group: "General", numCards: 6, personalBest: 0.6 },
-    { title: "Set10", group: "General", numCards: 6, personalBest: 0.6 },
-    { title: "Set11", group: "General", numCards: 6, personalBest: 0.6 },
-    { title: "Set12", group: "General", numCards: 6, personalBest: 0.6 },
-    { title: "Set13", group: "General", numCards: 6, personalBest: 0.6 },
-    { title: "Set14", group: "General", numCards: 6, personalBest: 0.6 },
-    { title: "Set15", group: "General", numCards: 6, personalBest: 0.6 },
-  ];
+import { useNavigation } from "@react-navigation/native";
+import { fetchCardSets } from "../database";
+import * as SQLite from "expo-sqlite";
+
+const db = SQLite.openDatabase("mydb.db");
+
+// TODO: Set removal functionality
+// TODO: Add set functionality
+// TODO: How to trigger refetch after set removal or addition?
+const Home = () => {
+  const navigation = useNavigation();
+  const [cardSets, setCardSets] = useState([]);
+
+  useEffect(() => {
+    // Fetch card sets from the database
+    fetchCardSets((data) => {
+      setCardSets(data);
+    });
+  }, []);
 
   const renderItem = ({ item }) => (
     <Pressable
       style={styles.cardContainer}
-      onPress={() => navigation.navigate("Help")}
+      onPress={() => navigation.navigate("SetOverview", item)}
     >
       <Text>
         {item.title}
         {"\n"}
-        {item.group}
+        {item.group_name}
         {"\n"}
         {item.numCards}
         {"\n"}
         {item.personalBest}
       </Text>
-      <Button title="remove"></Button>
+      <Button title="remove" onPress={() => handleRemove(item.id)}></Button>
     </Pressable>
   );
+
+  const handleRemove = (id) => {
+    // TODO: Implement logic to remove a card set from the database
+  };
 
   const styles = StyleSheet.create({
     cardContainer: {
       margin: 8,
       padding: 16,
       width: "29%",
-      borderWidth: 2, // Add border width
-      borderColor: "green", // Add border color
+      borderWidth: 2,
+      borderColor: "green",
     },
   });
 
   return (
     <View>
       <FlatList
-        data={CardSets}
+        data={cardSets}
         numColumns={3}
         renderItem={renderItem}
-        keyExtractor={(item) => item.title}
+        keyExtractor={(item) => item.id.toString()}
       ></FlatList>
     </View>
   );
