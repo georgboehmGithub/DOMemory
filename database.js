@@ -92,4 +92,29 @@ export const insertCardSet = (data, callback) => {
       );
     });
   };
+
+  export const updateCardSet = (id, data, callback) => {
+    const { title, group_name, numCards, personalBest } = data;
+  
+    db.transaction((tx) => {
+      tx.executeSql(
+        "UPDATE card_sets SET title = ?, group_name = ?, numCards = ?, personalBest = ? WHERE id = ?",
+        [title, group_name, numCards, personalBest, id],
+        (_, results) => {
+          if (results.rowsAffected > 0) {
+            console.log(`Card set with ID ${id} updated successfully`);
+            // If update was successful, invoke the callback to notify the component
+            if (callback) {
+              callback();
+            }
+          } else {
+            console.error(`Failed to update card set with ID ${id}`);
+          }
+        },
+        (_, error) => {
+          console.error("Error updating card set:", error);
+        }
+      );
+    });
+  };
   

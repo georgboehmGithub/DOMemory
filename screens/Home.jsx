@@ -10,18 +10,16 @@ import {
 
 import { useNavigation } from "@react-navigation/native";
 import { fetchCardSets } from "../database";
-// TODO: Rename Confirmation Modal or make more general
 import ConfirmationModal from "../components/ConfirmationModal";
-import { removeCardSet, insertCardSet } from "../database";
-import CreateSetFormModal from "../components/forms/CreateSetFormModal";
+import { removeCardSet, insertCardSet, updateCardSet } from "../database";
+import CreateModifySetFormModal from "../components/forms/CreateModifySetFormModal";
 
-// TODO: Add set functionality
-// TODO: How to trigger refetch after set removal or addition?
 const Home = () => {
   const navigation = useNavigation();
   const [cardSets, setCardSets] = useState([]);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [addSetModalVisible, setAddSetModalVisible] = useState(false);
+  const [modifySetModalVisible, setModifySetModalVisible] = useState(false);
   const [selectedSetId, setSelectedSetId] = useState(null);
 
   // TODO: Write refetch card sets function
@@ -33,7 +31,9 @@ const Home = () => {
     });
   }, []);
 
-  // Removing set card logic
+  /**
+   * Removing set card logic
+   */
   const confirmSetCardRemoval = () => {
     removeCardSet(selectedSetId, () => {
       // Callback function to fetch card sets again after removal
@@ -45,25 +45,50 @@ const Home = () => {
     setSelectedSetId(null);
   };
 
-  const cancelSetCardRemoval = () => {
-    setRemoveModalVisible(false);
-    setSelectedSetId(null);
-  };
-
   const handleSetCardRemoval = (itemId) => {
     setSelectedSetId(itemId);
     setRemoveModalVisible(true);
   };
 
-  // Adding set card logic
+  /**
+   * Adding set card logic
+   */
   const submitSetCardCreation = (formData) => {
     insertCardSet(formData, () => {
       setAddSetModalVisible(false);
       fetchCardSets((data) => {
         console.log("Fetched these sets: ", data);
         setCardSets(data);
+        setSelectedSetId(null);
       });
     });
+  };
+
+  /**
+   * Modify set card logic
+   */
+  const handleSetCardModification = (itemId) => {
+    setSelectedSetId(itemId);
+    setModifySetModalVisible(true);
+  };
+
+  const submitSetCardModification = (formData) => {
+    updateCardSet(selectedSetId, formData, () => {
+      setModifySetModalVisible(false);
+      fetchCardSets((data) => {
+        console.log("Fetched these sets: ", data);
+        setCardSets(data);
+        setSelectedSetId(null);
+      });
+    });
+  };
+
+  // Cancel any modal action
+  const cancelSetCardAction = () => {
+    setRemoveModalVisible(false);
+    setAddSetModalVisible(false);
+    setModifySetModalVisible(false);
+    setSelectedSetId(null);
   };
 
   const renderItem = ({ item }) => (
@@ -81,9 +106,20 @@ const Home = () => {
         {item.personalBest}
       </Text>
       <Button
+        style={styles.modifyDeleteButtons}
         title="remove"
-        onPress={() => handleSetCardRemoval(item.id)}
-      ></Button>
+        onPress={() => {
+          handleSetCardRemoval(item.id);
+        }}
+      />
+      <Text>--------------------------------------------</Text>
+      <Button
+        style={styles.modifyDeleteButtons}
+        title="modify"
+        onPress={() => {
+          handleSetCardModification(item.id);
+        }}
+      />
     </Pressable>
   );
 
@@ -94,6 +130,10 @@ const Home = () => {
       width: "29%",
       borderWidth: 2,
       borderColor: "green",
+    },
+    modifyDeleteButtons: {
+      // marginBottom: 8,
+      // margin: 8,
     },
     addButton: {
       // TODO: Add Button basic styling
@@ -106,22 +146,31 @@ const Home = () => {
         title="Add new Set"
         style={styles.addButton}
         onPress={() => setAddSetModalVisible(true)}
-      ></Button>
+      />
       <FlatList
         data={cardSets}
         numColumns={3}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-      ></FlatList>
+      />
       <ConfirmationModal
         isVisible={removeModalVisible}
         confirmRemove={confirmSetCardRemoval}
-        cancelRemove={cancelSetCardRemoval}
-      ></ConfirmationModal>
-      <CreateSetFormModal
+        onCancel={cancelSetCardAction}
+      />
+      <CreateModifySetFormModal
         isVisible={addSetModalVisible}
         onSubmit={submitSetCardCreation}
-      ></CreateSetFormModal>
+        onCancel={cancelSetCardAction}
+      />
+      <CreateModifySetFormModal
+        isVisible={modifySetModalVisible}
+        onSubmit={submitSetCardModification}
+        existingSetMetaData={cardSets.find(
+          (cardSet) => cardSet.id === selectedSetId
+        )}
+        onCancel={cancelSetCardAction}
+      />
     </View>
   );
 };

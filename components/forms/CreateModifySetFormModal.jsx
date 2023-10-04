@@ -1,11 +1,18 @@
 import { Text, TextInput, Button, Modal } from "react-native";
 import { useForm, Controller } from "react-hook-form";
+import React, { useEffect } from "react";
 
-const CreateSetFormModal = ({ isVisible, onSubmit }) => {
+const CreateModifySetFormModal = ({
+  isVisible,
+  onSubmit,
+  existingSetMetaData,
+  onCancel,
+}) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       title: "",
@@ -15,7 +22,11 @@ const CreateSetFormModal = ({ isVisible, onSubmit }) => {
     },
   });
 
-  const handleCardCreationSubmit = (data) => {
+  useEffect(() => {
+    reset(existingSetMetaData);
+  }, [existingSetMetaData]);
+
+  const handleCardCreatioModificationSubmit = (data) => {
     onSubmit(data);
   };
 
@@ -94,9 +105,13 @@ const CreateSetFormModal = ({ isVisible, onSubmit }) => {
       {errors.personalBest && (
         <Text>This field is required and should be a decimal number.</Text>
       )}
-      <Button title="Submit" onPress={handleSubmit(handleCardCreationSubmit)} />
+      <Button
+        title="Submit"
+        onPress={handleSubmit(handleCardCreatioModificationSubmit)}
+      />
+      <Button title="Cancel" onPress={onCancel} />
     </Modal>
   );
 };
 
-export default CreateSetFormModal;
+export default CreateModifySetFormModal;

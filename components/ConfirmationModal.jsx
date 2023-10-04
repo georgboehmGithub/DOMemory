@@ -1,11 +1,10 @@
 import { Modal, Button } from "react-native";
 
-const ConfirmationModal = ({ confirmRemove, cancelRemove, isVisible }) => {
+const ConfirmationModal = ({ confirmRemove, onCancel, isVisible }) => {
   return (
     <Modal visible={isVisible}>
-      {/* <Text>Are you sure you want to remove this entity?</Text> */}
       <Button title="Confirm" onPress={confirmRemove} />
-      <Button title="Cancel" onPress={cancelRemove} />
+      <Button title="Cancel" onPress={onCancel} />
     </Modal>
   );
 };
