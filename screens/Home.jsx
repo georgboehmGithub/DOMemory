@@ -6,6 +6,7 @@ import {
   FlatList,
   Pressable,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -13,6 +14,7 @@ import { fetchCardSets } from "../database";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { removeCardSet, insertCardSet, updateCardSet } from "../database";
 import CreateModifySetFormModal from "../components/forms/CreateModifySetFormModal";
+import { AntDesign } from "@expo/vector-icons";
 
 const Home = ({ route }) => {
   const { isSetDatabaseInitialized } = route.params;
@@ -95,60 +97,116 @@ const Home = ({ route }) => {
       style={styles.cardContainer}
       onPress={() => navigation.navigate("SetOverview", item)}
     >
-      <Text>
-        {`title: ${item.title}`}
-        {"\n"}
-        {`group name: ${item.group_name}`}
-        {"\n"}
-        {`numCards: ${item.numCards}`}
-        {"\n"}
-        {`personal best: ${item.personalBest}`}
-      </Text>
-      <Button
-        style={styles.modifyDeleteButtons}
-        title="remove"
-        onPress={() => {
-          handleSetCardRemoval(item.id);
-        }}
-      />
-      <Text>--------------------------------------------</Text>
-      <Button
-        style={styles.modifyDeleteButtons}
-        title="modify"
-        onPress={() => {
-          handleSetCardModification(item.id);
-        }}
-      />
+      <Text style={styles.titleText}>{item.title}</Text>
+      <Text style={styles.groupNameText}>{item.group_name}</Text>
+      <View style={styles.detailSection}>
+        <View style={styles.bottomRow}>
+          <Text style={styles.numCardsText}>{item.numCards} Cards</Text>
+          <Text style={styles.personalBestText}>
+            {item.personalBest * 100}%
+          </Text>
+        </View>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          // style={styles.deleteButton}
+          title="Remove"
+          color="firebrick"
+          onPress={() => {
+            handleSetCardRemoval(item.id);
+          }}
+        />
+        <Button
+          // style={styles.modifyButton}
+          title="Modify"
+          color="skyblue"
+          onPress={() => {
+            handleSetCardModification(item.id);
+          }}
+        />
+      </View>
     </Pressable>
   );
 
   const styles = StyleSheet.create({
     cardContainer: {
+      marginLeft: 10,
       margin: 8,
       padding: 16,
-      width: "29%",
-      borderWidth: 2,
-      borderColor: "green",
+      width: "45%",
+      borderRadius: 10,
+      backgroundColor: "#FFFFFF", // Set a background color
+      shadowColor: "#000", // Add a shadow
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5, // For Android
     },
-    modifyDeleteButtons: {
-      // marginBottom: 8,
-      // margin: 8,
+    titleText: {
+      fontSize: 18, // Adjust the font size as needed
+      fontWeight: "bold", // Make the title bold
+    },
+    groupNameText: {
+      fontSize: 16, // Adjust the font size as needed
+      color: "gray", // Make the group name less emphasized
+    },
+    bottomRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    detailSection: {
+      marginTop: 80,
+    },
+    numCardsText: {
+      fontSize: 14, // Adjust the font size as needed
+      fontWeight: "bold", // Make the number of cards bold
+    },
+    personalBestText: {
+      fontSize: 14, // Adjust the font size as needed
+      color: "green", // Customize the color for personal best
+    },
+    buttonContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      marginTop: 8, // Adjust as needed for spacing
+      gap: 6,
     },
     addButton: {
-      // TODO: Add Button basic styling
+      backgroundColor: "blue",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      alignSelf: "center", // Center horizontally
+      marginTop: 16, // Margin at the top of the screen
+      marginBottom: 16,
+      paddingVertical: 10, // Vertical padding
+      paddingHorizontal: 20, // Horizontal padding
+      borderRadius: 5,
+    },
+    addButtonText: {
+      color: "white",
+      fontSize: 16,
+      marginLeft: 10, // Margin between icon and text
     },
   });
 
   return (
-    <View>
-      <Button
-        title="Add new Set"
+    <View style={{ flex: 1 }}>
+      <TouchableOpacity
         style={styles.addButton}
         onPress={() => setAddSetModalVisible(true)}
-      />
+      >
+        <AntDesign name="pluscircleo" size={24} color="white" />
+        <Text style={styles.addButtonText}>Add New Set</Text>
+      </TouchableOpacity>
       <FlatList
+        style={styles.setContainer}
         data={cardSets}
-        numColumns={3}
+        numColumns={2}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
       />

@@ -10,6 +10,7 @@ import SetOverview from './screens/SetOverview';
 import React, { useEffect, useState } from 'react';
 import { initializeSetDatabase, initializeCardDatabase } from "./database";
 import Session from './screens/Session';
+import { SafeAreaView, Platform} from 'react-native';
 
 // TODO: import Ionicons from '@expo/vector-icons/Ionicons';
 const Tab = createBottomTabNavigator();
@@ -17,7 +18,9 @@ const Stack = createNativeStackNavigator();
 
 function HomeStack({isSetDatabaseInitialized}) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{
+      headerShown: false
+    }}>
       <Stack.Screen
         name="HomeStack"
         component={Home}
@@ -46,12 +49,16 @@ export default function App() {
  
   return (
     <NavigationContainer>
-      <Tab.Navigator>
+      <SafeAreaView style={{flex: 1, paddingTop: Platform.OS === 'android' ? 35 : 0}}>
+      <Tab.Navigator screenOptions={{
+    headerShown: false
+  }}>
       <Tab.Screen name="Home" children={() => <HomeStack isSetDatabaseInitialized={isSetDatabaseInitialized}/>} />
       <Tab.Screen name="Help" component={Help} />
       <Tab.Screen name="Stats" component={Stats} />
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
+    </SafeAreaView>
     </NavigationContainer>
   )
 }
