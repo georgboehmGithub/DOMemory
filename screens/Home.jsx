@@ -128,6 +128,7 @@ const Home = ({ route }) => {
     </Pressable>
   );
 
+  // TODO: Export and clean house
   const styles = StyleSheet.create({
     cardContainer: {
       marginLeft: 10,

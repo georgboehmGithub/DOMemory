@@ -11,8 +11,8 @@ import React, { useEffect, useState } from 'react';
 import { initializeSetDatabase, initializeCardDatabase } from "./database";
 import Session from './screens/Session';
 import { SafeAreaView, Platform} from 'react-native';
+import { AntDesign } from "@expo/vector-icons";
 
-// TODO: import Ionicons from '@expo/vector-icons/Ionicons';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -53,10 +53,30 @@ export default function App() {
       <Tab.Navigator screenOptions={{
     headerShown: false
   }}>
-      <Tab.Screen name="Home" children={() => <HomeStack isSetDatabaseInitialized={isSetDatabaseInitialized}/>} />
-      <Tab.Screen name="Help" component={Help} />
-      <Tab.Screen name="Stats" component={Stats} />
-      <Tab.Screen name="Settings" component={Settings} />
+      <Tab.Screen options={{
+      tabBarLabel: 'Home',
+      tabBarIcon: ({ color, size }) => (
+        <AntDesign name="home" color={color} size={size} />
+      ),
+    }} name="Home" children={() => <HomeStack isSetDatabaseInitialized={isSetDatabaseInitialized}/>} />
+      <Tab.Screen options={{
+      tabBarLabel: 'Help',
+      tabBarIcon: ({ color, size }) => (
+        <AntDesign name="questioncircleo" color={color} size={size} />
+      ),
+    }} name="Help" component={Help} />
+      <Tab.Screen options={{
+      tabBarLabel: 'Stats',
+      tabBarIcon: ({ color, size }) => (
+        <AntDesign name="barschart" color={color} size={size} />
+      ),
+    }} name="Stats" component={Stats} />
+      <Tab.Screen options={{
+      tabBarLabel: 'Settings',
+      tabBarIcon: ({ color, size }) => (
+        <AntDesign name="setting" color={color} size={size} />
+      ),
+    }} name="Settings" component={Settings} />
     </Tab.Navigator>
     </SafeAreaView>
     </NavigationContainer>
