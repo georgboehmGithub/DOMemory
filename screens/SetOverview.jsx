@@ -37,7 +37,7 @@ const SetOverview = ({ route }) => {
    * Removing card logic
    */
   const confirmCardRemoval = () => {
-    removeCard(selectedCardId, () => {
+    removeCard(id, selectedCardId, () => {
       fetchCardsBySet(id, (data) => {
         setCards(data);
       });

@@ -51,6 +51,32 @@ export const fetchCardSets = (callback) => {
     });
   };
 
+export const updateCardSetNumCards = (cardSetId) => {
+    // Fetch the current numCards value for the card set
+    fetchCardsBySet(cardSetId, (cards) => {
+      if (cards && cards.length >= 0) {
+        const updatedNumCards = cards.length;
+        // Update the numCards value in the card sets table
+        db.transaction((tx) => {
+          tx.executeSql(
+            "UPDATE card_sets SET numCards = ? WHERE id = ?",
+            [updatedNumCards, cardSetId],
+            (_, results) => {
+              if (results.rowsAffected > 0) {
+                console.log(`Updated numCards for card set with ID ${cardSetId}`);
+              } else {
+                console.error(`Failed to update numCards for card set with ID ${cardSetId}`);
+              }
+            },
+            (_, error) => {
+              console.error("Error updating numCards for card set:", error);
+            }
+          );
+        });
+      }
+    });
+  };
+  
   export const removeCardSet = (id, callback) => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -161,6 +187,8 @@ db.transaction((tx) => {
     (_, results) => {
         if (results.rowsAffected > 0) {
         console.log("Card inserted successfully");
+        // Update numCards value in the associated card set
+        updateCardSetNumCards(id);
         callback();
         } else {
         console.error("Failed to insert card");
@@ -192,17 +220,19 @@ db.transaction((tx) => {
 });
 };
 
-export const removeCard = (id, callback) => {
+export const removeCard = (setId, cardId, callback) => {
 db.transaction((tx) => {
     tx.executeSql(
     "DELETE FROM cards WHERE id = ?",
-    [id],
+    [cardId],
     (_, results) => {
         if (results.rowsAffected > 0) {
-        console.log(`Card with ID ${id} removed successfully`);
+        console.log(`Card with ID ${cardId} removed successfully`);
+        // Update numCards value in the associated card set
+        updateCardSetNumCards(setId, -1); // Increment by 1
         callback();
         } else {
-        console.error(`Failed to remove card with ID ${id}`);
+        console.error(`Failed to remove card with ID ${cardId}`);
         }
     },
     (_, error) => {
