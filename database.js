@@ -51,6 +51,25 @@ export const fetchCardSets = (callback) => {
     });
   };
 
+export const fetchCardSetById = (id, callback) => {
+db.transaction((tx) => {
+    tx.executeSql(
+        "SELECT * FROM card_sets WHERE id = ?",
+        [id],
+    (_, { rows }) => {
+        const data = [];
+        for (let i = 0; i < rows.length; i++) {
+        data.push(rows.item(i));
+        }
+        callback(data);
+    },
+    (_, error) => {
+        console.error("Error fetching card sets:", error);
+    }
+    );
+});
+};
+
 export const updateCardSetNumCards = (cardSetId) => {
     // Fetch the current numCards value for the card set
     fetchCardsBySet(cardSetId, (cards) => {
@@ -76,6 +95,29 @@ export const updateCardSetNumCards = (cardSetId) => {
       }
     });
   };
+
+  export const updatePersonalBest = (id, newPersonalBest, callback) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "UPDATE card_sets SET personalBest = ? WHERE id = ?",
+        [newPersonalBest, id],
+        (_, results) => {
+          if (results.rowsAffected > 0) {
+            console.log(`Updated personal best for card set with ID ${id}`);
+            if (callback) {
+              callback();
+            }
+          } else {
+            console.error(`Failed to update personal best for card set with ID ${id}`);
+          }
+        },
+        (_, error) => {
+          console.error("Error updating personal best for card set:", error);
+        }
+      );
+    });
+  };
+  
   
   export const removeCardSet = (id, callback) => {
     db.transaction((tx) => {

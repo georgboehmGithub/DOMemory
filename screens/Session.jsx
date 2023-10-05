@@ -1,14 +1,48 @@
 import { Text, View, Button } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "../components/Card";
+import { useNavigation } from "@react-navigation/native";
+import { fetchCardSetById, updatePersonalBest } from "../database";
+
 const Session = ({ route }) => {
   const { cards, id } = route.params;
+  const navigation = useNavigation();
   // TODO: IMPLEMENT SHUFFLING
   const [shuffledCards, setShuffledCards] = useState(cards);
   const [cardIsFlipped, setCardIsFlipped] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [wrongAnswers, setWrongAnswers] = useState(0);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [previousPersonalBest, setPreviousPersonalBest] = useState(0);
+
+  const handleSessionComplete = () => {
+    // Calculate success rate
+    const totalAnswers = correctAnswers + wrongAnswers;
+    const successRate =
+      Math.round(
+        (totalAnswers === 0 ? 0 : correctAnswers / totalAnswers) * 100
+      ) / 100;
+
+    // Compare with previous personal best
+    if (successRate > previousPersonalBest) {
+      // Update the new personal best in the database
+      updatePersonalBest(id, successRate, () => {
+        // Update the previousPersonalBest state
+        setPreviousPersonalBest(successRate);
+      });
+    }
+    navigation.navigate("HomeStack");
+  };
+
+  useEffect(() => {
+    // Fetch the previous personal best when the component mounts
+    fetchCardSetById(id, (data) => {
+      if (data.length > 0) {
+        setPreviousPersonalBest(data[0].personalBest);
+      }
+    });
+  }, [id]);
+
   return (
     <View>
       <Text>
@@ -50,6 +84,9 @@ const Session = ({ route }) => {
             </>
           )}
         </>
+      )}
+      {currentCardIndex === shuffledCards.length && (
+        <Button title="Finish Session" onPress={handleSessionComplete} />
       )}
     </View>
   );
