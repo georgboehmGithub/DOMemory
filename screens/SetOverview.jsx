@@ -13,25 +13,26 @@ import {
   updateCard,
   insertCard,
 } from "../database";
+import { useNavigation } from "@react-navigation/native";
 import ConfirmationModal from "../components/ConfirmationModal";
 import CreateModifyCardFormModal from "../components/forms/CreateModifyCardFormModal";
+import Card from "../components/Card";
 
+// TODO: Namings for these components abysmal -> Pls update
 const SetOverview = ({ route }) => {
   const { id, title, group, numCards, personalBest } = route.params;
   const [cards, setCards] = useState([]);
+  const navigation = useNavigation();
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [addCardModalVisible, setAddCardModalVisible] = useState(false);
   const [modifiyModalVisible, setModifyModalVisible] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState(null);
 
-  // console.log("received item in set overview: ", route.params);
   useEffect(() => {
     fetchCardsBySet(id, (data) => {
       setCards(data);
     });
   }, []);
-
-  // TODO: When removing or adding cards, update numCards for that set
 
   /**
    * Removing card logic
@@ -58,7 +59,7 @@ const SetOverview = ({ route }) => {
     insertCard(id, formData, () => {
       setAddCardModalVisible(false);
       fetchCardsBySet(id, (data) => {
-        console.log("Fetched these cards: ", data);
+        // console.log("Fetched these cards: ", data);
         setCards(data);
         setSelectedCardId(null);
       });
@@ -72,7 +73,7 @@ const SetOverview = ({ route }) => {
     updateCard(selectedCardId, formData, () => {
       setModifyModalVisible(false);
       fetchCardsBySet(id, (data) => {
-        console.log("Fetched these cards: ", data);
+        // console.log("Fetched these cards: ", data);
         setCards(data);
         setSelectedCardId(null);
       });
@@ -95,38 +96,28 @@ const SetOverview = ({ route }) => {
   };
 
   const renderItem = ({ item }) => (
-    <Pressable
-      style={styles.cardContainer}
-      // onPress={() => navigation.navigate("SetOverview", item)}
-    >
-      <Text>
-        {item.id + " | "}
-        {item.question + " | "}
-        {item.answer + " | "}
-      </Text>
-      <Button title={"Remove"} onPress={() => handleCardRemoval(item.id)} />
-      <Button
-        title={"Modify"}
-        onPress={() => handleCardModification(item.id)}
-      />
-    </Pressable>
+    <Card
+      cardContent={
+        <Text>
+          {item.id + " | "}
+          {item.question + " | "}
+          {item.answer + " | "}
+        </Text>
+      }
+      onModify={() => handleCardModification(item.id)}
+      onRemove={() => handleCardRemoval(item.id)}
+    />
   );
-
-  const styles = StyleSheet.create({
-    cardContainer: {
-      margin: 8,
-      padding: 16,
-      width: "80%",
-      borderWidth: 1,
-      borderColor: "grey",
-    },
-  });
 
   return (
     <View>
       <Button
+        title="Start session"
+        onPress={() => navigation.navigate("Session", { id, cards })}
+      />
+      <Button
         title="Add new Card"
-        style={styles.addButton}
+        // style={styles.addButton}
         onPress={() => setAddCardModalVisible(true)}
       />
       <FlatList

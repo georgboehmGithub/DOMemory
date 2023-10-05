@@ -27,7 +27,7 @@ const Home = ({ route }) => {
   useEffect(() => {
     // Fetch card sets from the database
     fetchCardSets((data) => {
-      console.log("Fetched these sets: ", data);
+      // console.log("Fetched these sets: ", data);
       setCardSets(data);
     });
   }, [isSetDatabaseInitialized]);
@@ -58,7 +58,7 @@ const Home = ({ route }) => {
     insertCardSet(formData, () => {
       setAddSetModalVisible(false);
       fetchCardSets((data) => {
-        console.log("Fetched these sets: ", data);
+        // console.log("Fetched these sets: ", data);
         setCardSets(data);
         setSelectedSetId(null);
       });
@@ -77,7 +77,7 @@ const Home = ({ route }) => {
     updateCardSet(selectedSetId, formData, () => {
       setModifySetModalVisible(false);
       fetchCardSets((data) => {
-        console.log("Fetched these sets: ", data);
+        // console.log("Fetched these sets: ", data);
         setCardSets(data);
         setSelectedSetId(null);
       });
@@ -100,13 +100,13 @@ const Home = ({ route }) => {
       onPress={() => navigation.navigate("SetOverview", item)}
     >
       <Text>
-        {`title: ${item.numCards}`}
+        {`title: ${item.title}`}
         {"\n"}
-        {`group name: ${item.numCards}`}
+        {`group name: ${item.group_name}`}
         {"\n"}
         {`numCards: ${item.numCards}`}
         {"\n"}
-        {`personal best: ${item.numCards}`}
+        {`personal best: ${item.personalBest}`}
       </Text>
       <Button
         style={styles.modifyDeleteButtons}

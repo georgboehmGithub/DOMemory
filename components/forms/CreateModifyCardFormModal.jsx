@@ -11,7 +11,7 @@ const CreateModifyCardFormModal = ({
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
     reset,
   } = useForm({
     defaultValues: {
@@ -21,8 +21,14 @@ const CreateModifyCardFormModal = ({
   });
 
   useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset({ question: "", answer: "" });
+    }
+  }, [isSubmitSuccessful, reset]);
+
+  useEffect(() => {
     reset(existingSetMetaData);
-  }, [existingSetMetaData]);
+  }, [existingSetMetaData, reset]);
 
   const handleCardCreationModificationSubmit = (data) => {
     onSubmit(data, () => reset());

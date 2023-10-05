@@ -9,6 +9,7 @@ import Settings from './screens/Settings';
 import SetOverview from './screens/SetOverview';
 import React, { useEffect, useState } from 'react';
 import { initializeSetDatabase, initializeCardDatabase } from "./database";
+import Session from './screens/Session';
 
 // TODO: import Ionicons from '@expo/vector-icons/Ionicons';
 const Tab = createBottomTabNavigator();
@@ -23,6 +24,7 @@ function HomeStack({isSetDatabaseInitialized}) {
         initialParams={{ isSetDatabaseInitialized: isSetDatabaseInitialized }}
       />
       <Stack.Screen name="SetOverview" component={SetOverview} />
+      <Stack.Screen name="Session" component={Session} />
     </Stack.Navigator>
   );
 }

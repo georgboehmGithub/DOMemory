@@ -11,7 +11,7 @@ const CreateModifySetFormModal = ({
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
     reset,
   } = useForm({
     defaultValues: {
@@ -23,11 +23,17 @@ const CreateModifySetFormModal = ({
   });
 
   useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset({ title: "", group_name: "", numCards: "", personalBest: "" });
+    }
+  }, [isSubmitSuccessful, reset]);
+
+  useEffect(() => {
     reset(existingSetMetaData);
-  }, [existingSetMetaData]);
+  }, [existingSetMetaData, reset]);
 
   const handleSetCreationModificationSubmit = (data) => {
-    onSubmit(data, () => reset());
+    onSubmit(data, () => {});
   };
 
   return (
