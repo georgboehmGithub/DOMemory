@@ -17,14 +17,12 @@ const CreateModifySetFormModal = ({
     defaultValues: {
       title: "",
       group_name: "",
-      numCards: "",
-      personalBest: "",
     },
   });
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset({ title: "", group_name: "", numCards: "", personalBest: "" });
+      reset({ title: "", group_name: "" });
     }
   }, [isSubmitSuccessful, reset]);
 
@@ -71,46 +69,6 @@ const CreateModifySetFormModal = ({
         name="group_name"
       />
       {errors.group_name && <Text>This field is required.</Text>}
-
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-          pattern: /^\d+$/, // Validate that it's a number
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            placeholder="Number of Cards"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value.toString()}
-          />
-        )}
-        name="numCards"
-      />
-      {errors.numCards && (
-        <Text>This field is required and should be a number.</Text>
-      )}
-
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-          pattern: /^[0-9]*\.?[0-9]+$/, // Validate that it's a decimal number
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            placeholder="Personal Best"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value.toString()}
-          />
-        )}
-        name="personalBest"
-      />
-      {errors.personalBest && (
-        <Text>This field is required and should be a decimal number.</Text>
-      )}
       <Button
         title="Submit"
         onPress={handleSubmit(handleSetCreationModificationSubmit)}

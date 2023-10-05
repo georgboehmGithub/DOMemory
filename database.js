@@ -101,12 +101,12 @@ export const updateCardSetNumCards = (cardSetId) => {
   };
 
 export const insertCardSet = (data, callback) => {
-    const { title, group_name, numCards, personalBest } = data;
+    const { title, group_name } = data;
     
     db.transaction((tx) => {
       tx.executeSql(
-        "INSERT INTO card_sets (title, group_name, numCards, personalBest) VALUES (?, ?, ?, ?)",
-        [title, group_name, numCards, personalBest],
+        "INSERT INTO card_sets (title, group_name, numCards, personalBest) VALUES (?, ?, 0, 0)",
+        [title, group_name],
         (_, results) => {
           if (results.rowsAffected > 0) {
             console.log("Card set inserted successfully");

@@ -27,7 +27,6 @@ const Home = ({ route }) => {
   useEffect(() => {
     // Fetch card sets from the database
     fetchCardSets((data) => {
-      // console.log("Fetched these sets: ", data);
       setCardSets(data);
     });
   }, [isSetDatabaseInitialized]);
@@ -37,7 +36,6 @@ const Home = ({ route }) => {
    */
   const confirmSetCardRemoval = () => {
     removeCardSet(selectedSetId, () => {
-      // Callback function to fetch card sets again after removal
       fetchCardSets((data) => {
         setCardSets(data);
       });
@@ -58,7 +56,6 @@ const Home = ({ route }) => {
     insertCardSet(formData, () => {
       setAddSetModalVisible(false);
       fetchCardSets((data) => {
-        // console.log("Fetched these sets: ", data);
         setCardSets(data);
         setSelectedSetId(null);
       });
@@ -77,7 +74,6 @@ const Home = ({ route }) => {
     updateCardSet(selectedSetId, formData, () => {
       setModifySetModalVisible(false);
       fetchCardSets((data) => {
-        // console.log("Fetched these sets: ", data);
         setCardSets(data);
         setSelectedSetId(null);
       });
