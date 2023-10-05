@@ -15,7 +15,7 @@ import { removeCardSet, insertCardSet, updateCardSet } from "../database";
 import CreateModifySetFormModal from "../components/forms/CreateModifySetFormModal";
 
 const Home = ({ route }) => {
-  const { isDatabaseInitialized } = route.params;
+  const { isSetDatabaseInitialized } = route.params;
   const navigation = useNavigation();
   const [cardSets, setCardSets] = useState([]);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
@@ -25,16 +25,12 @@ const Home = ({ route }) => {
 
   // TODO: Write refetch card sets function
   useEffect(() => {
-    console.log(
-      "HOME USE EFFECT isDatabaseInitialized: ",
-      isDatabaseInitialized
-    );
     // Fetch card sets from the database
     fetchCardSets((data) => {
       console.log("Fetched these sets: ", data);
       setCardSets(data);
     });
-  }, [isDatabaseInitialized]);
+  }, [isSetDatabaseInitialized]);
 
   /**
    * Removing set card logic
@@ -88,7 +84,9 @@ const Home = ({ route }) => {
     });
   };
 
-  // Cancel any modal action
+  /**
+   * Cancel any modal action
+   */
   const cancelSetCardAction = () => {
     setRemoveModalVisible(false);
     setAddSetModalVisible(false);
@@ -102,13 +100,13 @@ const Home = ({ route }) => {
       onPress={() => navigation.navigate("SetOverview", item)}
     >
       <Text>
-        {item.title}
+        {`title: ${item.numCards}`}
         {"\n"}
-        {item.group_name}
+        {`group name: ${item.numCards}`}
         {"\n"}
-        {item.numCards}
+        {`numCards: ${item.numCards}`}
         {"\n"}
-        {item.personalBest}
+        {`personal best: ${item.numCards}`}
       </Text>
       <Button
         style={styles.modifyDeleteButtons}

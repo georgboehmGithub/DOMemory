@@ -2,6 +2,9 @@ import * as SQLite from "expo-sqlite";
 
 const db = SQLite.openDatabase("mydb.db");
 
+/**
+ * Card set operations
+ */
 export const initializeSetDatabase = (callback) => {
   db.transaction((tx) => {
     tx.executeSql(
@@ -118,4 +121,117 @@ export const insertCardSet = (data, callback) => {
       );
     });
   };
+  
+
+/**
+ * Card operations
+ */
+export const initializeCardDatabase = (callback) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS cards (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          question TEXT,
+          answer TEXT,
+          card_set_id INTEGER,
+          FOREIGN KEY (card_set_id) REFERENCES card_sets (id) ON DELETE CASCADE
+        );`,
+        [],
+        (_, results) => {
+          if (results.rowsAffected >= 0) {
+            console.log("Card table created successfully");            
+            callback();
+          } else {
+            console.error("Failed to create card table");
+          }
+        },
+        (_, error) => {
+          console.error("Error creating card table:", error);
+        }
+      );
+    });
+  };
+
+export const insertCard = (id, data, callback) => {
+const { question, answer } = data;
+db.transaction((tx) => {
+    tx.executeSql(
+    "INSERT INTO cards (question, answer, card_set_id) VALUES (?, ?, ?)",
+    [question, answer, id],
+    (_, results) => {
+        if (results.rowsAffected > 0) {
+        console.log("Card inserted successfully");
+        callback();
+        } else {
+        console.error("Failed to insert card");
+        }
+    },
+    (_, error) => {
+        console.error("Error inserting card:", error);
+    }
+    );
+});
+};
+
+export const fetchCardsBySet = (cardSetId, callback) => {
+db.transaction((tx) => {
+    tx.executeSql(
+        "SELECT * FROM cards WHERE card_set_id = ?",
+        [cardSetId],
+    (_, { rows }) => {
+        const data = [];
+        for (let i = 0; i < rows.length; i++) {
+        data.push(rows.item(i));
+        }
+        callback(data);
+    },
+    (_, error) => {
+        console.error("Error fetching cards for card set:", error);
+    }
+    );
+});
+};
+
+export const removeCard = (id, callback) => {
+db.transaction((tx) => {
+    tx.executeSql(
+    "DELETE FROM cards WHERE id = ?",
+    [id],
+    (_, results) => {
+        if (results.rowsAffected > 0) {
+        console.log(`Card with ID ${id} removed successfully`);
+        callback();
+        } else {
+        console.error(`Failed to remove card with ID ${id}`);
+        }
+    },
+    (_, error) => {
+        console.error("Error removing card:", error);
+    }
+    );
+});
+};
+
+export const updateCard = (id, data, callback) => {
+const { question, answer } = data;
+
+db.transaction((tx) => {
+    tx.executeSql(
+    "UPDATE cards SET question = ?, answer = ? WHERE id = ?",
+    [question, answer, id],
+    (_, results) => {
+        if (results.rowsAffected > 0) {
+        console.log(`Card with ID ${id} updated successfully`);
+        callback();
+        } else {
+        console.error(`Failed to update card with ID ${id}`);
+        }
+    },
+    (_, error) => {
+        console.error("Error updating card:", error);
+    }
+    );
+});
+};
+  
   

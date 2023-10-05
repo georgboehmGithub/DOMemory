@@ -26,7 +26,7 @@ const CreateModifySetFormModal = ({
     reset(existingSetMetaData);
   }, [existingSetMetaData]);
 
-  const handleCardCreatioModificationSubmit = (data) => {
+  const handleSetCreationModificationSubmit = (data) => {
     onSubmit(data, () => reset());
   };
 
@@ -107,7 +107,7 @@ const CreateModifySetFormModal = ({
       )}
       <Button
         title="Submit"
-        onPress={handleSubmit(handleCardCreatioModificationSubmit)}
+        onPress={handleSubmit(handleSetCreationModificationSubmit)}
       />
       <Button
         title="Cancel"

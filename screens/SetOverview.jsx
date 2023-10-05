@@ -1,69 +1,98 @@
-import React from "react";
-import { Text, View, StyleSheet, FlatList, Pressable } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  Button,
+} from "react-native";
+import {
+  fetchCardsBySet,
+  removeCard,
+  updateCard,
+  insertCard,
+} from "../database";
+import ConfirmationModal from "../components/ConfirmationModal";
+import CreateModifyCardFormModal from "../components/forms/CreateModifyCardFormModal";
 
-// TODO: Database fetching and such
 const SetOverview = ({ route }) => {
-  const { title, group, numCards, personalBest } = route.params;
+  const { id, title, group, numCards, personalBest } = route.params;
+  const [cards, setCards] = useState([]);
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  const [addCardModalVisible, setAddCardModalVisible] = useState(false);
+  const [modifiyModalVisible, setModifyModalVisible] = useState(false);
+  const [selectedCardId, setSelectedCardId] = useState(null);
 
-  const cards1 = [
-    { id: 1, question: "1+1 = ?", answer: "2" },
-    { id: 2, question: "What is the capital of France?", answer: "Paris" },
-    { id: 3, question: "How many continents are there?", answer: "7" },
-    {
-      id: 4,
-      question: "What is the largest planet in our solar system?",
-      answer: "Jupiter",
-    },
-    {
-      id: 5,
-      question: "Who wrote the play 'Romeo and Juliet'?",
-      answer: "William Shakespeare",
-    },
-    { id: 6, question: "What is the chemical symbol for gold?", answer: "Au" },
-    {
-      id: 7,
-      question: "What is the largest mammal in the world?",
-      answer: "Blue Whale",
-    },
-    {
-      id: 8,
-      question: "Which gas do plants absorb from the atmosphere?",
-      answer: "Carbon dioxide",
-    },
-    { id: 9, question: "What is the square root of 144?", answer: "12" },
-    {
-      id: 10,
-      question: "Who painted the Mona Lisa?",
-      answer: "Leonardo da Vinci",
-    },
-    {
-      id: 11,
-      question: "What is the freezing point of water in Celsius?",
-      answer: "0°C",
-    },
-    {
-      id: 12,
-      question: "Which planet is known as the 'Red Planet'?",
-      answer: "Mars",
-    },
-    {
-      id: 13,
-      question: "What is the national flower of Japan?",
-      answer: "Cherry blossom",
-    },
-    {
-      id: 14,
-      question: "How many bones are there in the adult human body?",
-      answer: "206",
-    },
-    {
-      id: 15,
-      question: "Who wrote 'The Great Gatsby'?",
-      answer: "F. Scott Fitzgerald",
-    },
-  ];
+  // console.log("received item in set overview: ", route.params);
+  useEffect(() => {
+    fetchCardsBySet(id, (data) => {
+      setCards(data);
+    });
+  }, []);
 
-  const cards = cards1.concat(cards1);
+  // TODO: When removing or adding cards, update numCards for that set
+
+  /**
+   * Removing card logic
+   */
+  const confirmCardRemoval = () => {
+    removeCard(selectedCardId, () => {
+      fetchCardsBySet(id, (data) => {
+        setCards(data);
+      });
+    });
+    setRemoveModalVisible(false);
+    setSelectedCardId(null);
+  };
+
+  const handleCardRemoval = (cardId) => {
+    setRemoveModalVisible(true);
+    setSelectedCardId(cardId);
+  };
+
+  /**
+   * Adding card logic
+   */
+  const submitCardCreation = (formData) => {
+    insertCard(id, formData, () => {
+      setAddCardModalVisible(false);
+      fetchCardsBySet(id, (data) => {
+        console.log("Fetched these cards: ", data);
+        setCards(data);
+        setSelectedCardId(null);
+      });
+    });
+  };
+
+  /**
+   * Modifying card logic
+   */
+  const submitCardModification = (formData) => {
+    updateCard(selectedCardId, formData, () => {
+      setModifyModalVisible(false);
+      fetchCardsBySet(id, (data) => {
+        console.log("Fetched these cards: ", data);
+        setCards(data);
+        setSelectedCardId(null);
+      });
+    });
+  };
+
+  const handleCardModification = (cardId) => {
+    setModifyModalVisible(true);
+    setSelectedCardId(cardId);
+  };
+
+  /**
+   * Cancel any modal action
+   */
+  const cancelCardAction = () => {
+    setRemoveModalVisible(false);
+    setAddCardModalVisible(false);
+    setModifyModalVisible(false);
+    setSelectedCardId(null);
+  };
 
   const renderItem = ({ item }) => (
     <Pressable
@@ -75,34 +104,57 @@ const SetOverview = ({ route }) => {
         {item.question + " | "}
         {item.answer + " | "}
       </Text>
+      <Button title={"Remove"} onPress={() => handleCardRemoval(item.id)} />
+      <Button
+        title={"Modify"}
+        onPress={() => handleCardModification(item.id)}
+      />
     </Pressable>
   );
 
   const styles = StyleSheet.create({
     cardContainer: {
-      // margin: 8,
-      // padding: 16,
-      width: "100%",
-      borderWidth: 1, // Add border width
-      borderColor: "grey", // Add border color
+      margin: 8,
+      padding: 16,
+      width: "80%",
+      borderWidth: 1,
+      borderColor: "grey",
     },
   });
 
   return (
     <View>
+      <Button
+        title="Add new Card"
+        style={styles.addButton}
+        onPress={() => setAddCardModalVisible(true)}
+      />
       <FlatList
         data={cards}
         numColumns={1}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-      ></FlatList>
+      />
+      <ConfirmationModal
+        isVisible={removeModalVisible}
+        confirmRemove={confirmCardRemoval}
+        onCancel={cancelCardAction}
+      />
+      <CreateModifyCardFormModal
+        isVisible={addCardModalVisible}
+        onSubmit={submitCardCreation}
+        onCancel={cancelCardAction}
+      />
+      <CreateModifyCardFormModal
+        isVisible={modifiyModalVisible}
+        onSubmit={submitCardModification}
+        existingSetMetaData={cards.find(
+          (cardSet) => cardSet.id === selectedCardId
+        )}
+        onCancel={cancelCardAction}
+      />
     </View>
   );
-  // return (
-  //   <View className="">
-  //     <Text className="text-lg font-black">Set Overview: {title}</Text>
-  //   </View>
-  // );
 };
 
 export default SetOverview;
