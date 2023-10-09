@@ -5,7 +5,6 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Pressable,
   Button,
   Modal,
 } from "react-native";
