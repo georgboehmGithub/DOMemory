@@ -86,7 +86,7 @@ const CreateModifyEntityModal = ({
         <View style={styles.buttonRow}>
           <Button
             title="Cancel"
-            color="firebrick"
+            color="crimson"
             onPress={() => {
               reset();
               onCancel();
@@ -94,7 +94,7 @@ const CreateModifyEntityModal = ({
           />
           <Button
             title="Submit"
-            color="skyblue"
+            color="navy"
             onPress={handleSubmit(handleEntityCreationModificationSubmit)}
           />
         </View>

@@ -12,10 +12,10 @@ const RemoveEntityModal = ({
         <View style={styles.buttonRow}>
           <Button
             title="Cancel"
-            color="firebrick"
+            color="crimson"
             onPress={cancelEntityRemoval}
           />
-          <Button title="Yes" color="skyblue" onPress={confirmEntityRemoval} />
+          <Button title="Yes" color="navy" onPress={confirmEntityRemoval} />
         </View>
       </View>
     </Modal>

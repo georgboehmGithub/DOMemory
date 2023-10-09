@@ -138,7 +138,11 @@ const Session = ({ route }) => {
               <Text>Almost there!</Text>
             </>
           )}
-          <Button title="Finish Session" onPress={handleSessionComplete} />
+          <Button
+            color="navy"
+            title="Finish Session"
+            onPress={handleSessionComplete}
+          />
         </View>
       )}
     </View>

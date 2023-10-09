@@ -43,10 +43,10 @@ const Card = ({ cardContent, onRemove, onModify, alignTextCenter = false }) => {
       </View>
       <View style={styles.buttonContainer}>
         {onRemove && (
-          <Button color="firebrick" title={"Remove"} onPress={onRemove} />
+          <Button color="crimson" title={"Remove"} onPress={onRemove} />
         )}
         {onModify && (
-          <Button color="skyblue" title={"Modify"} onPress={onModify} />
+          <Button color="navy" title={"Modify"} onPress={onModify} />
         )}
       </View>
     </Pressable>

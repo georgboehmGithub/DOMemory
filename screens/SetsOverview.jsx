@@ -109,14 +109,15 @@ const SetsOverview = ({ route }) => {
       <View style={styles.buttonContainer}>
         <Button
           title="Remove"
-          color="firebrick"
+          color="crimson"
           onPress={() => {
             handleSetCardRemoval(item.id);
           }}
         />
         <Button
           title="Modify"
-          color="skyblue"
+          color="navy"
+          borderWidth=""
           onPress={() => {
             handleSetCardModification(item.id);
           }}
