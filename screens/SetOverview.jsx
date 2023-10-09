@@ -19,7 +19,6 @@ import CreateModifyCardFormModal from "../components/forms/CreateModifyCardFormM
 import Card from "../components/Card";
 import { AntDesign } from "@expo/vector-icons";
 
-// TODO: Namings for these components abysmal -> Pls update
 const SetOverview = ({ route }) => {
   const { id, title, group, numCards, personalBest } = route.params;
   const [cards, setCards] = useState([]);
@@ -60,7 +59,6 @@ const SetOverview = ({ route }) => {
     insertCard(id, formData, () => {
       setAddCardModalVisible(false);
       fetchCardsBySet(id, (data) => {
-        // console.log("Fetched these cards: ", data);
         setCards(data);
         setSelectedCardId(null);
       });
@@ -74,7 +72,6 @@ const SetOverview = ({ route }) => {
     updateCard(selectedCardId, formData, () => {
       setModifyModalVisible(false);
       fetchCardsBySet(id, (data) => {
-        // console.log("Fetched these cards: ", data);
         setCards(data);
         setSelectedCardId(null);
       });

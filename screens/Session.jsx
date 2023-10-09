@@ -9,7 +9,7 @@ import ProgressBar from "react-native-progress/Bar";
 const Session = ({ route }) => {
   const { cards, id } = route.params;
   const navigation = useNavigation();
-  // TODO: IMPLEMENT SHUFFLING
+  // TODO: IMPLEMENT SHUFFLING-
   const [shuffledCards, setShuffledCards] = useState(cards);
   const [cardIsFlipped, setCardIsFlipped] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -106,8 +106,6 @@ const Session = ({ route }) => {
                             : correctAnswers / totalAnswers) * 100
                         ) / 100;
                       setSessionPersonalBest(successRate);
-                      console.log("session score: ", successRate);
-                      console.log("best score: ", previousPersonalBest);
                     }
                   }}
                 >

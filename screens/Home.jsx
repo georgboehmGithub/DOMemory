@@ -25,7 +25,6 @@ const Home = ({ route }) => {
   const [modifySetModalVisible, setModifySetModalVisible] = useState(false);
   const [selectedSetId, setSelectedSetId] = useState(null);
 
-  // TODO: Write refetch card sets function
   useEffect(() => {
     // Fetch card sets from the database
     fetchCardSets((data) => {
@@ -128,7 +127,6 @@ const Home = ({ route }) => {
     </Pressable>
   );
 
-  // TODO: Export and clean house
   const styles = StyleSheet.create({
     cardContainer: {
       marginLeft: 10,
@@ -223,7 +221,6 @@ const Home = ({ route }) => {
         alignItems: "center",
       }}
     >
-      {/* TODO: Remove modal component */}
       <Modal
         visible={removeModalVisible}
         transparent={true}
