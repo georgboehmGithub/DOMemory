@@ -7,14 +7,14 @@ import {
   Pressable,
   StyleSheet,
   TouchableOpacity,
-  Modal,
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 import { fetchCardSets } from "../database";
 import { removeCardSet, insertCardSet, updateCardSet } from "../database";
-import CreateModifySetFormModal from "../components/forms/CreateModifySetFormModal";
+import CreateModifyEntityModal from "../components/modals/CreateModifyEntityModal";
 import { AntDesign } from "@expo/vector-icons";
+import RemoveEntityModal from "../components/modals/RemoveEntityModal";
 
 const Home = ({ route }) => {
   const { isSetDatabaseInitialized } = route.params;
@@ -108,7 +108,6 @@ const Home = ({ route }) => {
       </View>
       <View style={styles.buttonContainer}>
         <Button
-          // style={styles.deleteButton}
           title="Remove"
           color="firebrick"
           onPress={() => {
@@ -116,7 +115,6 @@ const Home = ({ route }) => {
           }}
         />
         <Button
-          // style={styles.modifyButton}
           title="Modify"
           color="skyblue"
           onPress={() => {
@@ -134,8 +132,8 @@ const Home = ({ route }) => {
       padding: 16,
       width: "45%",
       borderRadius: 10,
-      backgroundColor: "#FFFFFF", // Set a background color
-      shadowColor: "#000", // Add a shadow
+      backgroundColor: "#FFFFFF",
+      shadowColor: "#000",
       shadowOffset: {
         width: 0,
         height: 2,
@@ -145,12 +143,12 @@ const Home = ({ route }) => {
       elevation: 5, // For Android
     },
     titleText: {
-      fontSize: 18, // Adjust the font size as needed
-      fontWeight: "bold", // Make the title bold
+      fontSize: 18,
+      fontWeight: "bold",
     },
     groupNameText: {
-      fontSize: 16, // Adjust the font size as needed
-      color: "gray", // Make the group name less emphasized
+      fontSize: 16,
+      color: "gray",
     },
     bottomRow: {
       flexDirection: "row",
@@ -161,17 +159,17 @@ const Home = ({ route }) => {
       marginTop: 80,
     },
     numCardsText: {
-      fontSize: 14, // Adjust the font size as needed
-      fontWeight: "bold", // Make the number of cards bold
+      fontSize: 14,
+      fontWeight: "bold",
     },
     personalBestText: {
-      fontSize: 14, // Adjust the font size as needed
-      color: "green", // Customize the color for personal best
+      fontSize: 14,
+      color: "green",
     },
     buttonContainer: {
       flexDirection: "row",
       justifyContent: "center",
-      marginTop: 8, // Adjust as needed for spacing
+      marginTop: 8,
       gap: 6,
     },
     addButton: {
@@ -179,37 +177,17 @@ const Home = ({ route }) => {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      alignSelf: "center", // Center horizontally
-      marginTop: 16, // Margin at the top of the screen
+      alignSelf: "center",
+      marginTop: 16,
       marginBottom: 16,
-      paddingVertical: 10, // Vertical padding
-      paddingHorizontal: 20, // Horizontal padding
+      paddingVertical: 10,
+      paddingHorizontal: 20,
       borderRadius: 5,
     },
     addButtonText: {
       color: "white",
       fontSize: 16,
-      marginLeft: 10, // Margin between icon and text
-    },
-    modalView: {
-      margin: 20,
-      marginTop: 160,
-      backgroundColor: "white",
-      borderRadius: 20,
-      padding: 35,
-      height: 300,
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-    },
-    buttonRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      width: "100%", // Ensure the buttons take up the full width
-      marginTop: 60, // Adjust the top margin as needed
+      marginLeft: 10,
     },
   });
 
@@ -221,36 +199,22 @@ const Home = ({ route }) => {
         alignItems: "center",
       }}
     >
-      <Modal
-        visible={removeModalVisible}
-        transparent={true}
-        animationType="slide"
-      >
-        <View style={styles.modalView}>
-          <Text>Are you sure you want to remove this set?</Text>
-          <View style={styles.buttonRow}>
-            <Button
-              title="Cancel"
-              color="firebrick"
-              onPress={cancelSetCardAction}
-            />
-            <Button
-              title="Yes"
-              color="skyblue"
-              onPress={confirmSetCardRemoval}
-            />
-          </View>
-        </View>
-      </Modal>
-      <CreateModifySetFormModal
+      <RemoveEntityModal
+        isVisible={removeModalVisible}
+        cancelEntityRemoval={cancelSetCardAction}
+        confirmEntityRemoval={confirmSetCardRemoval}
+      />
+      <CreateModifyEntityModal
+        entity="Set"
         isVisible={addSetModalVisible}
         onSubmit={submitSetCardCreation}
         onCancel={cancelSetCardAction}
       />
-      <CreateModifySetFormModal
+      <CreateModifyEntityModal
+        entity="Set"
         isVisible={modifySetModalVisible}
         onSubmit={submitSetCardModification}
-        existingSetMetaData={cardSets.find(
+        existingEntityMetaData={cardSets.find(
           (cardSet) => cardSet.id === selectedSetId
         )}
         onCancel={cancelSetCardAction}

@@ -5,8 +5,6 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Button,
-  Modal,
 } from "react-native";
 import {
   fetchCardsBySet,
@@ -15,9 +13,10 @@ import {
   insertCard,
 } from "../database";
 import { useNavigation } from "@react-navigation/native";
-import CreateModifyCardFormModal from "../components/forms/CreateModifyCardFormModal";
 import Card from "../components/Card";
 import { AntDesign } from "@expo/vector-icons";
+import CreateModifyEntityModal from "../components/modals/CreateModifyEntityModal";
+import RemoveEntityModal from "../components/modals/RemoveEntityModal";
 
 const SetOverview = ({ route }) => {
   const { id, title, group, numCards, personalBest } = route.params;
@@ -101,92 +100,25 @@ const SetOverview = ({ route }) => {
     />
   );
 
-  const styles = StyleSheet.create({
-    questionStyle: {
-      fontSize: 14,
-      fontWeight: "bold",
-    },
-    addButton: {
-      backgroundColor: "blue",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      alignSelf: "center", // Center horizontally
-      marginTop: 16, // Margin at the top of the screen
-      marginBottom: 16,
-      paddingVertical: 10, // Vertical padding
-      paddingHorizontal: 20, // Horizontal padding
-      borderRadius: 5,
-    },
-    addButtonText: {
-      color: "white",
-      fontSize: 16,
-      marginLeft: 10, // Margin between icon and text
-    },
-    sessionButton: {
-      backgroundColor: "forestgreen",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      alignSelf: "center", // Center horizontally
-      marginTop: 16, // Margin at the top of the screen
-      marginBottom: 16,
-      paddingVertical: 10, // Vertical padding
-      paddingHorizontal: 20, // Horizontal padding
-      borderRadius: 5,
-    },
-    buttonContainer: {
-      flexDirection: "row",
-      margin: 8,
-      gap: 4,
-    },
-    modalView: {
-      margin: 20,
-      marginTop: 160,
-      backgroundColor: "white",
-      borderRadius: 20,
-      padding: 35,
-      height: 300,
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-    },
-    buttonRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      width: "100%", // Ensure the buttons take up the full width
-      marginTop: 60, // Adjust the top margin as needed
-    },
-  });
-
   return (
     <View style={{ flex: 1 }}>
-      <Modal
-        visible={removeModalVisible}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.modalView}>
-          <Text>Are you sure you want to remove this card?</Text>
-          <View style={styles.buttonRow}>
-            <Button
-              title="Cancel"
-              color="firebrick"
-              onPress={cancelCardAction}
-            />
-            <Button title="Yes" color="skyblue" onPress={confirmCardRemoval} />
-          </View>
-        </View>
-      </Modal>
-      <CreateModifyCardFormModal
+      <RemoveEntityModal
+        isVisible={removeModalVisible}
+        cancelEntityRemoval={cancelCardAction}
+        confirmEntityRemoval={confirmCardRemoval}
+      />
+      <CreateModifyEntityModal
         isVisible={modifiyModalVisible}
         onSubmit={submitCardModification}
-        existingSetMetaData={cards.find(
+        existingEntityMetaData={cards.find(
           (cardSet) => cardSet.id === selectedCardId
         )}
+        onCancel={cancelCardAction}
+      />
+      <CreateModifyEntityModal
+        entity="Card"
+        isVisible={addCardModalVisible}
+        onSubmit={submitCardCreation}
         onCancel={cancelCardAction}
       />
       <View style={styles.buttonContainer}>
@@ -211,13 +143,49 @@ const SetOverview = ({ route }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
-      <CreateModifyCardFormModal
-        isVisible={addCardModalVisible}
-        onSubmit={submitCardCreation}
-        onCancel={cancelCardAction}
-      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  questionStyle: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  addButton: {
+    backgroundColor: "blue",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center", // Center horizontally
+    marginTop: 16, // Margin at the top of the screen
+    marginBottom: 16,
+    paddingVertical: 10, // Vertical padding
+    paddingHorizontal: 20, // Horizontal padding
+    borderRadius: 5,
+  },
+  addButtonText: {
+    color: "white",
+    fontSize: 16,
+    marginLeft: 10, // Margin between icon and text
+  },
+  sessionButton: {
+    backgroundColor: "forestgreen",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center", // Center horizontally
+    marginTop: 16, // Margin at the top of the screen
+    marginBottom: 16,
+    paddingVertical: 10, // Vertical padding
+    paddingHorizontal: 20, // Horizontal padding
+    borderRadius: 5,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    margin: 8,
+    gap: 4,
+  },
+});
 
 export default SetOverview;

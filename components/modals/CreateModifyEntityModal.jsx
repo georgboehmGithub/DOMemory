@@ -2,10 +2,25 @@ import { Text, TextInput, Button, Modal, StyleSheet, View } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import React, { useEffect } from "react";
 
-const CreateModifyCardFormModal = ({
+const getDefaultValuesForEntity = (entity) => {
+  return entity === "Card"
+    ? {
+        // Card
+        question: "",
+        answer: "",
+      }
+    : {
+        // Set
+        title: "",
+        group_name: "",
+      };
+};
+
+const CreateModifyEntityModal = ({
+  entity = "Card",
   isVisible,
   onSubmit,
-  existingSetMetaData,
+  existingEntityMetaData,
   onCancel,
 }) => {
   const {
@@ -14,23 +29,20 @@ const CreateModifyCardFormModal = ({
     formState: { errors, isSubmitSuccessful },
     reset,
   } = useForm({
-    defaultValues: {
-      question: "",
-      answer: "",
-    },
+    defaultValues: getDefaultValuesForEntity(entity),
   });
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset({ question: "", answer: "" });
+      reset(getDefaultValuesForEntity(entity));
     }
   }, [isSubmitSuccessful, reset]);
 
   useEffect(() => {
-    reset(existingSetMetaData);
-  }, [existingSetMetaData, reset]);
+    reset(existingEntityMetaData);
+  }, [existingEntityMetaData, reset]);
 
-  const handleCardCreationModificationSubmit = (data) => {
+  const handleEntityCreationModificationSubmit = (data) => {
     onSubmit(data, () => reset());
   };
 
@@ -44,17 +56,16 @@ const CreateModifyCardFormModal = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder="Question"
+              placeholder={entity === "Card" ? "Question" : "Title"}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
               style={styles.input}
             />
           )}
-          name="question"
+          name={entity === "Card" ? "question" : "title"}
         />
         {errors.question && <Text>This field is required.</Text>}
-
         <Controller
           control={control}
           rules={{
@@ -62,14 +73,14 @@ const CreateModifyCardFormModal = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder="Answer"
+              placeholder={entity === "Card" ? "Answer" : "Group name"}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
               style={styles.input}
             />
           )}
-          name="answer"
+          name={entity === "Card" ? "answer" : "group_name"}
         />
         {errors.answer && <Text>This field is required.</Text>}
         <View style={styles.buttonRow}>
@@ -84,7 +95,7 @@ const CreateModifyCardFormModal = ({
           <Button
             title="Submit"
             color="skyblue"
-            onPress={handleSubmit(handleCardCreationModificationSubmit)}
+            onPress={handleSubmit(handleEntityCreationModificationSubmit)}
           />
         </View>
       </View>
@@ -98,8 +109,8 @@ const styles = StyleSheet.create({
     marginTop: 160,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 20, // Reduce padding for a cleaner look
-    minHeight: 200, // Adjust the minimum height as needed
+    padding: 20,
+    minHeight: 200,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -124,9 +135,9 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%", // Ensure the buttons take up the full width
-    marginTop: 60, // Adjust the top margin as needed
+    width: "100%",
+    marginTop: 60,
   },
 });
 
-export default CreateModifyCardFormModal;
+export default CreateModifyEntityModal;
