@@ -7,6 +7,7 @@ import {
   Pressable,
   StyleSheet,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -15,6 +16,7 @@ import ConfirmationModal from "../components/ConfirmationModal";
 import { removeCardSet, insertCardSet, updateCardSet } from "../database";
 import CreateModifySetFormModal from "../components/forms/CreateModifySetFormModal";
 import { AntDesign } from "@expo/vector-icons";
+import GenericModal from "../components/GenericModal";
 
 const Home = ({ route }) => {
   const { isSetDatabaseInitialized } = route.params;
@@ -193,10 +195,71 @@ const Home = ({ route }) => {
       fontSize: 16,
       marginLeft: 10, // Margin between icon and text
     },
+    modalView: {
+      margin: 20,
+      marginTop: 160,
+      backgroundColor: "white",
+      borderRadius: 20,
+      padding: 35,
+      height: 300,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+    },
+    buttonRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%", // Ensure the buttons take up the full width
+      marginTop: 60, // Adjust the top margin as needed
+    },
   });
 
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {/* TODO: Remove modal component */}
+      <Modal
+        visible={removeModalVisible}
+        transparent={true}
+        animationType="slide"
+      >
+        <View style={styles.modalView}>
+          <Text>Are you sure you want to remove this set?</Text>
+          <View style={styles.buttonRow}>
+            <Button
+              title="Cancel"
+              color="firebrick"
+              onPress={cancelSetCardAction}
+            />
+            <Button
+              title="Yes"
+              color="skyblue"
+              onPress={confirmSetCardRemoval}
+            />
+          </View>
+        </View>
+      </Modal>
+      <CreateModifySetFormModal
+        isVisible={addSetModalVisible}
+        onSubmit={submitSetCardCreation}
+        onCancel={cancelSetCardAction}
+      />
+      <CreateModifySetFormModal
+        isVisible={modifySetModalVisible}
+        onSubmit={submitSetCardModification}
+        existingSetMetaData={cardSets.find(
+          (cardSet) => cardSet.id === selectedSetId
+        )}
+        onCancel={cancelSetCardAction}
+      />
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => setAddSetModalVisible(true)}
@@ -210,24 +273,6 @@ const Home = ({ route }) => {
         numColumns={2}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-      />
-      <ConfirmationModal
-        isVisible={removeModalVisible}
-        confirmRemove={confirmSetCardRemoval}
-        onCancel={cancelSetCardAction}
-      />
-      <CreateModifySetFormModal
-        isVisible={addSetModalVisible}
-        onSubmit={submitSetCardCreation}
-        onCancel={cancelSetCardAction}
-      />
-      <CreateModifySetFormModal
-        isVisible={modifySetModalVisible}
-        onSubmit={submitSetCardModification}
-        existingSetMetaData={cardSets.find(
-          (cardSet) => cardSet.id === selectedSetId
-        )}
-        onCancel={cancelSetCardAction}
       />
     </View>
   );
