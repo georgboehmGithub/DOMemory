@@ -12,11 +12,9 @@ import {
 
 import { useNavigation } from "@react-navigation/native";
 import { fetchCardSets } from "../database";
-import ConfirmationModal from "../components/ConfirmationModal";
 import { removeCardSet, insertCardSet, updateCardSet } from "../database";
 import CreateModifySetFormModal from "../components/forms/CreateModifySetFormModal";
 import { AntDesign } from "@expo/vector-icons";
-import GenericModal from "../components/GenericModal";
 
 const Home = ({ route }) => {
   const { isSetDatabaseInitialized } = route.params;

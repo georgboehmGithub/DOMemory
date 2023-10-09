@@ -16,7 +16,6 @@ import {
   insertCard,
 } from "../database";
 import { useNavigation } from "@react-navigation/native";
-import ConfirmationModal from "../components/ConfirmationModal";
 import CreateModifyCardFormModal from "../components/forms/CreateModifyCardFormModal";
 import Card from "../components/Card";
 import { AntDesign } from "@expo/vector-icons";
