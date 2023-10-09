@@ -1,10 +1,14 @@
 import React from "react";
 import { Text, View } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 
 const Settings = () => {
   return (
-    <View className="">
-      <Text className="text-lg font-black">SETTINGS</Text>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <AntDesign name="tool" size={40} color="black" />
+      <Text className="text-md font-black">
+        This page is currently under construction.
+      </Text>
     </View>
   );
 };
