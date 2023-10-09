@@ -18,7 +18,7 @@ import { AntDesign } from "@expo/vector-icons";
 import CreateModifyEntityModal from "../components/modals/CreateModifyEntityModal";
 import RemoveEntityModal from "../components/modals/RemoveEntityModal";
 
-const SetOverview = ({ route }) => {
+const CardsOverview = ({ route }) => {
   const { id, title, group, numCards, personalBest } = route.params;
   const [cards, setCards] = useState([]);
   const navigation = useNavigation();
@@ -188,4 +188,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SetOverview;
+export default CardsOverview;

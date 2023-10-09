@@ -16,7 +16,7 @@ import CreateModifyEntityModal from "../components/modals/CreateModifyEntityModa
 import { AntDesign } from "@expo/vector-icons";
 import RemoveEntityModal from "../components/modals/RemoveEntityModal";
 
-const Home = ({ route }) => {
+const SetsOverview = ({ route }) => {
   const { isSetDatabaseInitialized } = route.params;
   const navigation = useNavigation();
   const [cardSets, setCardSets] = useState([]);
@@ -94,7 +94,7 @@ const Home = ({ route }) => {
   const renderItem = ({ item }) => (
     <Pressable
       style={styles.cardContainer}
-      onPress={() => navigation.navigate("SetOverview", item)}
+      onPress={() => navigation.navigate("CardsOverview", item)}
     >
       <Text style={styles.titleText}>{item.title}</Text>
       <Text style={styles.groupNameText}>{item.group_name}</Text>
@@ -237,4 +237,4 @@ const Home = ({ route }) => {
   );
 };
 
-export default Home;
+export default SetsOverview;

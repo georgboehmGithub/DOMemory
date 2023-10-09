@@ -2,11 +2,11 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Home from "./screens/Home";
+import SetsOverview from "./screens/SetsOverview";
 import Help from "./screens/Help";
 import Stats from "./screens/Stats";
 import Settings from "./screens/Settings";
-import SetOverview from "./screens/SetOverview";
+import CardsOverview from "./screens/CardsOverview";
 import React, { useEffect, useState } from "react";
 import { initializeSetDatabase, initializeCardDatabase } from "./database";
 import Session from "./screens/Session";
@@ -16,7 +16,7 @@ import { AntDesign } from "@expo/vector-icons";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function HomeStack({ isSetDatabaseInitialized }) {
+function OverviewStack({ isSetDatabaseInitialized }) {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -24,11 +24,11 @@ function HomeStack({ isSetDatabaseInitialized }) {
       }}
     >
       <Stack.Screen
-        name="HomeStack"
-        component={Home}
+        name="OverviewStack"
+        component={SetsOverview}
         initialParams={{ isSetDatabaseInitialized: isSetDatabaseInitialized }}
       />
-      <Stack.Screen name="SetOverview" component={SetOverview} />
+      <Stack.Screen name="CardsOverview" component={CardsOverview} />
       <Stack.Screen name="Session" component={Session} />
     </Stack.Navigator>
   );
@@ -59,14 +59,16 @@ export default function App() {
         >
           <Tab.Screen
             options={{
-              tabBarLabel: "Home",
+              tabBarLabel: "Overview",
               tabBarIcon: ({ color, size }) => (
                 <AntDesign name="home" color={color} size={size} />
               ),
             }}
-            name="Home"
+            name="Overview"
             children={() => (
-              <HomeStack isSetDatabaseInitialized={isSetDatabaseInitialized} />
+              <OverviewStack
+                isSetDatabaseInitialized={isSetDatabaseInitialized}
+              />
             )}
           />
           <Tab.Screen

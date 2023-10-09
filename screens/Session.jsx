@@ -27,7 +27,7 @@ const Session = ({ route }) => {
         setPreviousPersonalBest(sessionPersonalBest);
       });
     }
-    navigation.navigate("HomeStack");
+    navigation.navigate("OverviewStack");
   };
 
   useEffect(() => {
