@@ -6,29 +6,34 @@ const db = SQLite.openDatabase("mydb.db");
  * Card set operations
  */
 export const initializeSetDatabase = (callback) => {
-  db.transaction((tx) => {
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS card_sets (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        group_name TEXT,
-        numCards INTEGER,
-        personalBest REAL
-      );`,
-      [],
-      (_, results) => {
-        if (results.rowsAffected >= 0) {
-          callback();
-          // You can add code here to insert data if needed
-        } else {
-          console.error("Failed to create card set table");
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS card_sets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            group_name TEXT,
+            numCards INTEGER,
+            personalBest REAL,
+            description TEXT
+          );`,
+        [],
+        (_, results) => {
+          if (results.rowsAffected >= 0) {
+            callback();
+          } else {
+            console.error("Failed to create card set table");
+          }
+        },
+        (_, error) => {
+          console.error("Error creating card set table:", error);
         }
-      },
-      (_, error) => {
-        console.error("Error creating card set table:", error);
-      }
-    );
-  });
+      );
+    },
+    (_, error) => {
+      console.error("Error dropping card set table:", error);
+    }
+  );
 };
 
 export const fetchCardSets = (callback) => {
@@ -142,12 +147,12 @@ export const removeCardSet = (id, callback) => {
 };
 
 export const insertCardSet = (data, callback) => {
-  const { title, group_name } = data;
+  const { title, group_name, description } = data;
 
   db.transaction((tx) => {
     tx.executeSql(
-      "INSERT INTO card_sets (title, group_name, numCards, personalBest) VALUES (?, ?, 0, 0)",
-      [title, group_name],
+      "INSERT INTO card_sets (title, group_name, numCards, personalBest, description) VALUES (?, ?, 0, 0, ?)",
+      [title, group_name, description],
       (_, results) => {
         if (results.rowsAffected > 0) {
           // If insertion was successful, invoke the callback to notify the component
@@ -164,12 +169,12 @@ export const insertCardSet = (data, callback) => {
 };
 
 export const updateCardSet = (id, data, callback) => {
-  const { title, group_name, numCards, personalBest } = data;
+  const { title, group_name, numCards, personalBest, description } = data;
 
   db.transaction((tx) => {
     tx.executeSql(
-      "UPDATE card_sets SET title = ?, group_name = ?, numCards = ?, personalBest = ? WHERE id = ?",
-      [title, group_name, numCards, personalBest, id],
+      "UPDATE card_sets SET title = ?, group_name = ?, numCards = ?, personalBest = ?, description = ? WHERE id = ?",
+      [title, group_name, numCards, personalBest, description, id],
       (_, results) => {
         if (results.rowsAffected > 0) {
           // If update was successful, invoke the callback to notify the component

@@ -13,6 +13,7 @@ const getDefaultValuesForEntity = (entity) => {
         // Set
         title: "",
         group_name: "",
+        description: "",
       };
 };
 
@@ -83,6 +84,27 @@ const CreateModifyEntityModal = ({
           name={entity === "Card" ? "answer" : "group_name"}
         />
         {errors.answer && <Text>This field is required.</Text>}
+        {entity === "Set" && (
+          <>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  placeholder={"Description"}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  style={styles.input}
+                />
+              )}
+              name={"description"}
+            />
+            {errors.description && <Text>This field is required.</Text>}
+          </>
+        )}
         <View style={styles.buttonRow}>
           <Button
             title="Cancel"
