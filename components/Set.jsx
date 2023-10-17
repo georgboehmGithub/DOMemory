@@ -1,13 +1,22 @@
-import React from "react";
-import { Text, StyleSheet, Pressable, Button, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Text,
+  StyleSheet,
+  Pressable,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons";
+import EntityActionModal from "./modals/EntityActionModal";
 
 const Set = ({ item, onRemove, onModify }) => {
   const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <Pressable
-      style={styles.cardContainer}
+      style={styles.setContainer}
       onPress={() => navigation.navigate("CardsOverview", item)}
     >
       <Text style={styles.titleText}>{item.title}</Text>
@@ -26,20 +35,32 @@ const Set = ({ item, onRemove, onModify }) => {
           </Text>
         </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <Button title="Remove" color="crimson" onPress={onRemove} />
-        <Button title="Modify" color="navy" borderWidth="" onPress={onModify} />
-      </View>
+      <TouchableOpacity
+        style={styles.actionButtonContainer}
+        onPress={() => setModalVisible(true)}
+      >
+        <AntDesign name="ellipsis1" size={30} color="black" />
+      </TouchableOpacity>
+      <EntityActionModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onRemove={onRemove}
+        onModify={onModify}
+      />
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  cardContainer: {
+  actionButtonContainer: {
+    alignItems: "flex-end",
+  },
+  setContainer: {
     marginLeft: 10,
     margin: 8,
     padding: 16,
     width: "45%",
+    height: 230,
     borderRadius: 10,
     backgroundColor: "#FFFFFF",
     shadowColor: "#000",
@@ -77,12 +98,6 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     flex: 1,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 8,
-    gap: 6,
   },
 });
 

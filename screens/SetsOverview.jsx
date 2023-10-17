@@ -2,14 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
-  Button,
   FlatList,
-  Pressable,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
 
-import { useNavigation } from "@react-navigation/native";
 import { fetchCardSets } from "../database";
 import { removeCardSet, insertCardSet, updateCardSet } from "../database";
 import CreateModifyEntityModal from "../components/modals/CreateModifyEntityModal";
@@ -19,7 +16,6 @@ import Set from "../components/Set";
 
 const SetsOverview = ({ route }) => {
   const { isSetDatabaseInitialized } = route.params;
-  const navigation = useNavigation();
   const [cardSets, setCardSets] = useState([]);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [addSetModalVisible, setAddSetModalVisible] = useState(false);
@@ -124,8 +120,6 @@ const SetsOverview = ({ route }) => {
     <View
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
       }}
     >
       <RemoveEntityModal
@@ -156,7 +150,6 @@ const SetsOverview = ({ route }) => {
         <Text style={styles.addSetButtonText}>Add New Set</Text>
       </TouchableOpacity>
       <FlatList
-        style={styles.setContainer}
         data={cardSets}
         numColumns={2}
         renderItem={renderItem}

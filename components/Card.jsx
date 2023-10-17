@@ -1,8 +1,20 @@
-import React from "react";
-import { Text, StyleSheet, Pressable, Button, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Text,
+  StyleSheet,
+  Pressable,
+  Button,
+  View,
+  TouchableOpacity,
+} from "react-native";
+import EntityActionModal from "./modals/EntityActionModal";
+import { AntDesign } from "@expo/vector-icons";
 
 const Card = ({ cardContent, onRemove, onModify, alignTextCenter = false }) => {
   const styles = StyleSheet.create({
+    actionButtonContainer: {
+      alignItems: "flex-end",
+    },
     cardContainer: {
       padding: 16,
       margin: 8,
@@ -34,6 +46,8 @@ const Card = ({ cardContent, onRemove, onModify, alignTextCenter = false }) => {
     },
   });
 
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <Pressable style={styles.cardContainer}>
       <View style={styles.textContainer}>
@@ -41,14 +55,20 @@ const Card = ({ cardContent, onRemove, onModify, alignTextCenter = false }) => {
           {cardContent}
         </Text>
       </View>
-      <View style={styles.buttonContainer}>
-        {onRemove && (
-          <Button color="crimson" title={"Remove"} onPress={onRemove} />
-        )}
-        {onModify && (
-          <Button color="navy" title={"Modify"} onPress={onModify} />
-        )}
-      </View>
+      {onRemove && onModify && (
+        <TouchableOpacity
+          style={styles.actionButtonContainer}
+          onPress={() => setModalVisible(true)}
+        >
+          <AntDesign name="ellipsis1" size={30} color="black" />
+        </TouchableOpacity>
+      )}
+      <EntityActionModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onRemove={onRemove}
+        onModify={onModify}
+      />
     </Pressable>
   );
 };
