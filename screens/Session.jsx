@@ -5,11 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import { fetchCardSetById, updatePersonalBest } from "../database";
 import { AntDesign } from "@expo/vector-icons";
 import ProgressBar from "react-native-progress/Bar";
+import { useTheme } from "../ThemeContext";
+import { LIGHT_THEME, DARK_THEME } from "../themes";
 
 const Session = ({ route }) => {
   const { cards, id } = route.params;
   const navigation = useNavigation();
-  // TODO: IMPLEMENT SHUFFLING-
   const [shuffledCards, setShuffledCards] = useState(cards);
   const [cardIsFlipped, setCardIsFlipped] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -17,6 +18,9 @@ const Session = ({ route }) => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [previousPersonalBest, setPreviousPersonalBest] = useState(0);
   const [sessionPersonalBest, setSessionPersonalBest] = useState(0);
+
+  const { theme } = useTheme(); // Use the useTheme hook
+  const usedTheme = theme === "light" ? LIGHT_THEME : DARK_THEME;
 
   const handleSessionComplete = () => {
     // Compare with previous personal best
@@ -40,13 +44,13 @@ const Session = ({ route }) => {
   }, [id]);
 
   return (
-    <View style={styles.container}>
+    <View style={usedTheme.SESSION.container}>
       {currentCardIndex < shuffledCards.length && (
         <ProgressBar
           progress={currentCardIndex / shuffledCards.length}
           width={200}
           height={20}
-          color="mediumturquoise"
+          color={usedTheme.SESSION.progressBar.color}
         />
       )}
 
@@ -63,16 +67,20 @@ const Session = ({ route }) => {
           <View style={styles.buttonContainer}>
             {!cardIsFlipped && (
               <TouchableOpacity
-                style={styles.flipButton}
+                style={usedTheme.SESSION.flipButton}
                 onPress={() => setCardIsFlipped(true)}
               >
-                <AntDesign name="swap" size={28} color="white" />
+                <AntDesign
+                  name="swap"
+                  size={28}
+                  color={usedTheme.SESSION.flipButtonIcon.color}
+                />
               </TouchableOpacity>
             )}
             {cardIsFlipped && (
               <>
                 <TouchableOpacity
-                  style={styles.correctButton}
+                  style={usedTheme.SESSION.correctButton}
                   onPress={() => {
                     setCardIsFlipped(false);
                     setCorrectAnswers(correctAnswers + 1);
@@ -92,7 +100,7 @@ const Session = ({ route }) => {
                   <AntDesign name="check" size={36} color="white" />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.wrongButton}
+                  style={usedTheme.SESSION.wrongButton}
                   onPress={() => {
                     setCardIsFlipped(false);
                     setWrongAnswers(wrongAnswers + 1);
@@ -120,22 +128,24 @@ const Session = ({ route }) => {
         <View style={styles.sessionEndScreen}>
           {sessionPersonalBest > previousPersonalBest ? (
             <>
-              <Text style={styles.pogText}>POG NEW PB:</Text>
-              <Text style={styles.pogPersonalBest}>{`${
+              <Text style={usedTheme.SESSION.pogText}>POG NEW PB:</Text>
+              <Text style={usedTheme.SESSION.pogPersonalBest}>{`${
                 sessionPersonalBest * 100
               }%`}</Text>
             </>
           ) : (
             <>
-              <Text>Session score:</Text>
-              <Text style={styles.pogPersonalBest}>
+              <Text style={usedTheme.SESSION.pogText}>Session score:</Text>
+              <Text style={usedTheme.SESSION.pogPersonalBest}>
                 {`${sessionPersonalBest * 100}%`}
               </Text>
-              <Text>All time personal best:</Text>
-              <Text style={styles.pogPersonalBest}>
+              <Text style={usedTheme.SESSION.text}>
+                All time personal best:
+              </Text>
+              <Text style={usedTheme.SESSION.pogPersonalBest}>
                 {`${previousPersonalBest * 100}%`}
               </Text>
-              <Text>Almost there!</Text>
+              <Text style={usedTheme.SESSION.text}>Almost there!</Text>
             </>
           )}
           <Button
@@ -152,31 +162,11 @@ const Session = ({ route }) => {
 const styles = StyleSheet.create({
   sessionEndScreen: {
     flex: 1,
-    justifyContent: "center", // Center vertically
-    alignItems: "center", // Center horizontally
-  },
-
-  pogText: {
-    fontSize: 24, // Adjust the font size as needed
-    fontWeight: "bold", // Apply bold font weight
-    color: "#ff00ff", // Apply your desired text color
-    // Add any other styling you desire
-  },
-  pogPersonalBest: {
-    fontSize: 36, // Adjust the font size as needed
-    fontWeight: "bold", // Apply bold font weight
-    color: "purple", // Apply your desired text color
-    marginBottom: 30,
-    // Add any other styling you desire
-  },
-  container: {
-    flex: 1,
-    margin: 20,
-    justifyContent: "center", // Center vertically
-    alignItems: "center", // Center horizontally
+    justifyContent: "center",
+    alignItems: "center",
   },
   centeredContainer: {
-    alignItems: "center", // Center horizontally
+    alignItems: "center",
     width: "80%",
     height: "90%",
     marginTop: 20,
@@ -185,39 +175,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 100,
     justifyContent: "space-between",
-    alignItems: "center", // Center vertically
+    alignItems: "center",
     gap: 100,
-  },
-  flipButton: {
-    flex: 1, // Equal flex for all buttons in the row
-    alignItems: "center",
-    backgroundColor: "#696969", // Example background color for buttons
-    padding: 10,
-    borderRadius: 30,
-  },
-  correctButton: {
-    alignItems: "center",
-    flex: 1,
-    backgroundColor: "#32cd32",
-    justifyContent: "center",
-    padding: 10,
-    width: 80,
-    height: 80,
-    borderRadius: 100,
-  },
-  wrongButton: {
-    alignItems: "center",
-    flex: 1,
-    backgroundColor: "#dc143c",
-    justifyContent: "center",
-    padding: 10,
-    width: 80,
-    height: 80,
-    borderRadius: 100,
-  },
-  buttonText: {
-    color: "white", // Text color for buttons
-    fontWeight: "bold",
   },
 });
 

@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, FlatList, TouchableOpacity } from "react-native";
 
 import { fetchCardSets } from "../database";
 import { removeCardSet, insertCardSet, updateCardSet } from "../database";
@@ -13,6 +7,8 @@ import CreateModifyEntityModal from "../components/modals/CreateModifyEntityModa
 import { AntDesign } from "@expo/vector-icons";
 import RemoveEntityModal from "../components/modals/RemoveEntityModal";
 import Set from "../components/Set";
+import { useTheme } from "../ThemeContext";
+import { LIGHT_THEME, DARK_THEME } from "../themes";
 
 const SetsOverview = ({ route }) => {
   const { isSetDatabaseInitialized } = route.params;
@@ -21,6 +17,9 @@ const SetsOverview = ({ route }) => {
   const [addSetModalVisible, setAddSetModalVisible] = useState(false);
   const [modifySetModalVisible, setModifySetModalVisible] = useState(false);
   const [selectedSetId, setSelectedSetId] = useState(null);
+
+  const { theme } = useTheme(); // Use the useTheme hook
+  const usedTheme = theme === "light" ? LIGHT_THEME : DARK_THEME;
 
   useEffect(() => {
     // Fetch card sets from the database
@@ -96,32 +95,8 @@ const SetsOverview = ({ route }) => {
     />
   );
 
-  const styles = StyleSheet.create({
-    addSetButton: {
-      backgroundColor: "blue",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      alignSelf: "center",
-      marginTop: 16,
-      marginBottom: 16,
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      borderRadius: 5,
-    },
-    addSetButtonText: {
-      color: "white",
-      fontSize: 16,
-      marginLeft: 10,
-    },
-  });
-
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
+    <View style={usedTheme.SETOVERVIEW.container}>
       <RemoveEntityModal
         isVisible={removeModalVisible}
         cancelEntityRemoval={cancelSetCardAction}
@@ -143,11 +118,15 @@ const SetsOverview = ({ route }) => {
         onCancel={cancelSetCardAction}
       />
       <TouchableOpacity
-        style={styles.addSetButton}
+        style={usedTheme.SETOVERVIEW.addSetButton}
         onPress={() => setAddSetModalVisible(true)}
       >
-        <AntDesign name="pluscircleo" size={24} color="white" />
-        <Text style={styles.addSetButtonText}>Add New Set</Text>
+        <AntDesign
+          color={usedTheme.SETOVERVIEW.addSetButtonIcon.color}
+          name="pluscircle"
+          size={24}
+        />
+        <Text style={usedTheme.SETOVERVIEW.addSetButtonText}>Add New Set</Text>
       </TouchableOpacity>
       <FlatList
         data={cardSets}

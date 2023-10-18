@@ -12,8 +12,12 @@ const EntityActionModal = ({ visible, onClose, onRemove, onModify }) => {
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <View style={{ backgroundColor: "white", padding: 20 }}>
           <Text>Options</Text>
-          <Button title="Remove" color="crimson" onPress={onRemove} />
-          <Button title="Modify" color="navy" onPress={onModify} />
+          {onRemove && (
+            <Button title="Remove" color="crimson" onPress={onRemove} />
+          )}
+          {onModify && (
+            <Button title="Modify" color="navy" onPress={onModify} />
+          )}
           <Button title="Cancel" onPress={onClose}></Button>
         </View>
       </View>

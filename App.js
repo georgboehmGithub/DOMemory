@@ -1,5 +1,4 @@
 import { NavigationContainer } from "@react-navigation/native";
-
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SetsOverview from "./screens/SetsOverview";
@@ -12,6 +11,9 @@ import { initializeSetDatabase, initializeCardDatabase } from "./database";
 import Session from "./screens/Session";
 import { SafeAreaView, Platform } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { ThemeProvider } from "./ThemeContext";
+import { useTheme } from "./ThemeContext";
+import { LIGHT_THEME, DARK_THEME } from "./themes";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -34,27 +36,26 @@ function OverviewStack({ isSetDatabaseInitialized }) {
   );
 }
 
-export default function App() {
-  const [isSetDatabaseInitialized, setIsSetDatabaseInitialized] =
-    useState(false);
-
-  useEffect(() => {
-    // Initialize the set database if it has not yet been created
-    initializeSetDatabase(() => {
-      setIsSetDatabaseInitialized(true);
-    });
-    // Initialize the card database if it has not yet been created
-    initializeCardDatabase(() => {});
-  }, []);
+const AppWrapper = ({ isSetDatabaseInitialized }) => {
+  const { theme } = useTheme();
+  const usedTheme = theme === "light" ? LIGHT_THEME : DARK_THEME;
 
   return (
     <NavigationContainer>
       <SafeAreaView
-        style={{ flex: 1, paddingTop: Platform.OS === "android" ? 35 : 0 }}
+        style={{
+          flex: 1,
+          paddingTop: Platform.OS === "android" ? 35 : 0,
+          backgroundColor: usedTheme.background,
+          color: usedTheme.text,
+        }}
       >
         <Tab.Navigator
           screenOptions={{
             headerShown: false,
+            tabBarStyle: {
+              backgroundColor: usedTheme.background,
+            },
           }}
         >
           <Tab.Screen
@@ -63,6 +64,8 @@ export default function App() {
               tabBarIcon: ({ color, size }) => (
                 <AntDesign name="home" color={color} size={size} />
               ),
+              tabBarActiveTintColor: usedTheme.tabBarActiveTintColor,
+              tabBarInactiveTintColor: usedTheme.tabBarInactiveTintColor,
             }}
             name="Overview"
             children={() => (
@@ -77,6 +80,8 @@ export default function App() {
               tabBarIcon: ({ color, size }) => (
                 <AntDesign name="questioncircleo" color={color} size={size} />
               ),
+              tabBarActiveTintColor: usedTheme.tabBarActiveTintColor,
+              tabBarInactiveTintColor: usedTheme.tabBarInactiveTintColor,
             }}
             name="Help"
             component={Help}
@@ -87,6 +92,11 @@ export default function App() {
               tabBarIcon: ({ color, size }) => (
                 <AntDesign name="barschart" color={color} size={size} />
               ),
+              tabBarActiveTintColor: usedTheme.tabBarActiveTintColor,
+              tabBarInactiveTintColor: usedTheme.tabBarInactiveTintColor,
+            }}
+            initialParams={{
+              isSetDatabaseInitialized: isSetDatabaseInitialized,
             }}
             name="Stats"
             component={Stats}
@@ -97,6 +107,8 @@ export default function App() {
               tabBarIcon: ({ color, size }) => (
                 <AntDesign name="setting" color={color} size={size} />
               ),
+              tabBarActiveTintColor: usedTheme.tabBarActiveTintColor,
+              tabBarInactiveTintColor: usedTheme.tabBarInactiveTintColor,
             }}
             name="Settings"
             component={Settings}
@@ -104,5 +116,25 @@ export default function App() {
         </Tab.Navigator>
       </SafeAreaView>
     </NavigationContainer>
+  );
+};
+
+export default function App() {
+  const [isSetDatabaseInitialized, setIsSetDatabaseInitialized] =
+    useState(false);
+
+  useEffect(() => {
+    // Initialize the set database if it has not yet been created
+    initializeSetDatabase(() => {
+      setIsSetDatabaseInitialized(true);
+    });
+    // Initialize the card database if it has not yet been created
+    initializeCardDatabase(() => {});
+  }, []);
+
+  return (
+    <ThemeProvider>
+      <AppWrapper isSetDatabaseInitialized={isSetDatabaseInitialized} />
+    </ThemeProvider>
   );
 }

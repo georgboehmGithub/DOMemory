@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, FlatList, TouchableOpacity } from "react-native";
 import {
   fetchCardsBySet,
   removeCard,
@@ -17,15 +11,20 @@ import Card from "../components/Card";
 import { AntDesign } from "@expo/vector-icons";
 import CreateModifyEntityModal from "../components/modals/CreateModifyEntityModal";
 import RemoveEntityModal from "../components/modals/RemoveEntityModal";
+import { useTheme } from "../ThemeContext";
+import { LIGHT_THEME, DARK_THEME } from "../themes";
 
 const CardsOverview = ({ route }) => {
-  const { id, title, group, numCards, personalBest } = route.params;
+  const { id } = route.params;
   const [cards, setCards] = useState([]);
   const navigation = useNavigation();
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [addCardModalVisible, setAddCardModalVisible] = useState(false);
   const [modifiyModalVisible, setModifyModalVisible] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState(null);
+
+  const { theme } = useTheme();
+  const usedTheme = theme === "light" ? LIGHT_THEME : DARK_THEME;
 
   useEffect(() => {
     fetchCardsBySet(id, (data) => {
@@ -94,14 +93,16 @@ const CardsOverview = ({ route }) => {
 
   const renderItem = ({ item }) => (
     <Card
-      cardContent={<Text style={styles.questionStyle}>{item.question}</Text>}
+      cardContent={
+        <Text style={usedTheme.CARDOVERVIEW.question}>{item.question}</Text>
+      }
       onModify={() => handleCardModification(item.id)}
       onRemove={() => handleCardRemoval(item.id)}
     />
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={usedTheme.CARDOVERVIEW.container}>
       <RemoveEntityModal
         isVisible={removeModalVisible}
         cancelEntityRemoval={cancelCardAction}
@@ -121,20 +122,30 @@ const CardsOverview = ({ route }) => {
         onSubmit={submitCardCreation}
         onCancel={cancelCardAction}
       />
-      <View style={styles.buttonContainer}>
+      <View style={usedTheme.CARDOVERVIEW.buttonContainer}>
         <TouchableOpacity
-          style={styles.sessionButton}
+          style={usedTheme.CARDOVERVIEW.sessionButton}
           onPress={() => navigation.navigate("Session", { id, cards })}
         >
-          <AntDesign name="play" size={24} color="white" />
-          <Text style={styles.addButtonText}>Start Session</Text>
+          <AntDesign
+            name="play"
+            size={24}
+            color={usedTheme.CARDOVERVIEW.buttonIcon.color}
+          />
+          <Text style={usedTheme.CARDOVERVIEW.addButtonText}>
+            Start Session
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.addButton}
+          style={usedTheme.CARDOVERVIEW.addButton}
           onPress={() => setAddCardModalVisible(true)}
         >
-          <AntDesign name="pluscircleo" size={24} color="white" />
-          <Text style={styles.addButtonText}>Add New Card</Text>
+          <AntDesign
+            name="pluscircleo"
+            size={24}
+            color={usedTheme.CARDOVERVIEW.buttonIcon.color}
+          />
+          <Text style={usedTheme.CARDOVERVIEW.addButtonText}>Add New Card</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -146,46 +157,4 @@ const CardsOverview = ({ route }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  questionStyle: {
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  addButton: {
-    backgroundColor: "blue",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center", // Center horizontally
-    marginTop: 16, // Margin at the top of the screen
-    marginBottom: 16,
-    paddingVertical: 10, // Vertical padding
-    paddingHorizontal: 20, // Horizontal padding
-    borderRadius: 5,
-  },
-  addButtonText: {
-    color: "white",
-    fontSize: 16,
-    marginLeft: 10, // Margin between icon and text
-  },
-  sessionButton: {
-    backgroundColor: "forestgreen",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center", // Center horizontally
-    marginTop: 16, // Margin at the top of the screen
-    marginBottom: 16,
-    paddingVertical: 10, // Vertical padding
-    paddingHorizontal: 20, // Horizontal padding
-    borderRadius: 5,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    margin: 8,
-    gap: 4,
-  },
-});
-
 export default CardsOverview;

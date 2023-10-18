@@ -9,31 +9,17 @@ import {
 } from "react-native";
 import EntityActionModal from "./modals/EntityActionModal";
 import { AntDesign } from "@expo/vector-icons";
+import { useTheme } from "../ThemeContext";
+import { LIGHT_THEME, DARK_THEME } from "../themes";
 
 const Card = ({ cardContent, onRemove, onModify, alignTextCenter = false }) => {
+  const { theme } = useTheme(); // Use the useTheme hook
+  const usedTheme = theme === "light" ? LIGHT_THEME : DARK_THEME;
+  const [modalVisible, setModalVisible] = useState(false);
+
   const styles = StyleSheet.create({
     actionButtonContainer: {
       alignItems: "flex-end",
-    },
-    cardContainer: {
-      padding: 16,
-      margin: 8,
-      width: "95%",
-      borderRadius: 10,
-      borderColor: "grey",
-      alignItems: "center", // Center horizontally by default
-      backgroundColor: "#FFFFFF",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      flex: 1,
-      flexDirection: "row",
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
-      justifyContent: "space-between",
     },
     buttonContainer: {
       flexDirection: "row",
@@ -42,16 +28,18 @@ const Card = ({ cardContent, onRemove, onModify, alignTextCenter = false }) => {
     textContainer: {
       flex: 1,
       paddingRight: 8,
-      alignItems: alignTextCenter ? "center" : "flex-start", // Conditionally align text center
+      alignItems: alignTextCenter ? "center" : "flex-start",
     },
   });
 
-  const [modalVisible, setModalVisible] = useState(false);
-
   return (
-    <Pressable style={styles.cardContainer}>
+    <Pressable style={usedTheme.CARDOVERVIEW.CARD.cardContainer}>
       <View style={styles.textContainer}>
-        <Text numberOfLines={1} ellipsizeMode="tail">
+        <Text
+          numberOfLines={onRemove && onModify ? 1 : 0} // Conditionally set the numberOfLines
+          ellipsizeMode={onRemove && onModify ? "tail" : "clip"} // Conditionally set ellipsizeMode
+          style={usedTheme.CARDOVERVIEW.CARD.text}
+        >
           {cardContent}
         </Text>
       </View>
@@ -60,7 +48,11 @@ const Card = ({ cardContent, onRemove, onModify, alignTextCenter = false }) => {
           style={styles.actionButtonContainer}
           onPress={() => setModalVisible(true)}
         >
-          <AntDesign name="ellipsis1" size={30} color="black" />
+          <AntDesign
+            name="ellipsis1"
+            size={30}
+            color={usedTheme.CARDOVERVIEW.CARD.settingsIcon.color}
+          />
         </TouchableOpacity>
       )}
       <EntityActionModal
